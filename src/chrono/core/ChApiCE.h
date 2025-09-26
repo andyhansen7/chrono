@@ -16,6 +16,7 @@
 #include <cstddef>
 #include <cassert>
 #include <iostream>
+#include <array>
 
 #include "chrono/ChVersion.h"
 #include "chrono/core/ChPlatform.h"
@@ -30,5 +31,26 @@
 #else
     #define ChApi ChApiIMPORT
 #endif
+
+// Define CH_NODISCARD macro for C++17 and later
+#if __cplusplus >= 201703L
+    #define CH_NODISCARD [[nodiscard]]
+#else
+    #define CH_NODISCARD
+#endif
+
+
+// Helper to detect if a type is constexpr constructible
+template <typename T, int = (T{}, 0)>
+constexpr bool is_constexpr_constructible (int)
+{ return true; }
+
+template <typename>
+constexpr bool is_constexpr_constructible (long)
+{ return false; }
+
+// Type aliases
+template<class T, unsigned L>
+using CH_ARRAY = std::array<T, L>;
 
 #endif

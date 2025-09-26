@@ -16,13 +16,9 @@
 
 namespace chrono {
 
-const ChVector3d VNULL(0., 0., 0.);
-const ChVector3d VECT_X(1., 0., 0.);
-const ChVector3d VECT_Y(0., 1., 0.);
-const ChVector3d VECT_Z(0., 0., 1.);
-
-ChApi ChVector3d operator*(double s, const ChVector3i& V) {
-    return ChVector3d(V.x() * s, V.y() * s, V.z() * s);
-}
+constexpr inline ChVector3d VNULL(0., 0., 0.);
+constexpr inline ChVector3d VECT_X(1., 0., 0.);
+constexpr inline ChVector3d VECT_Y(0., 1., 0.);
+constexpr inline ChVector3d VECT_Z(0., 0., 1.);
 
 }  // end namespace chrono
