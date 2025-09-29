@@ -23,7 +23,6 @@ set(Chrono_core_SOURCES
     core/ChClassFactory.cpp
     core/ChQuaternion.cpp
     core/ChRotation.cpp
-    core/ChVector3.cpp
     core/ChCoordsys.cpp
     core/ChQuadrature.cpp
     core/ChBezierCurve.cpp

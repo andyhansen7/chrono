@@ -21,6 +21,13 @@
 /// Namespace for custom make_shared implementation.
 namespace chrono_types {
 
+// Define CH_NODISCARD macro for C++17 and later
+#if __cplusplus >= 201703L
+    #define CH_NODISCARD [[nodiscard]]
+#else
+    #define CH_NODISCARD
+#endif
+
 // Adapted from MRtrix3 (https://github.com/MRtrix3)
 
 /// Check if a class has a custom new operator.
@@ -107,6 +114,19 @@ template <typename T, typename... Args, std::enable_if_t<!class_has_custom_new_o
 inline std::unique_ptr<T> make_unique(Args&&... args) {
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
+
+// Helper to detect if a type is constexpr constructible
+template <typename T, int = (T{}, 0)>
+constexpr bool is_constexpr_constructible (int)
+{ return true; }
+
+template <typename>
+constexpr bool is_constexpr_constructible (long)
+{ return false; }
+
+// Type aliases
+template<class T, unsigned L>
+using ChArray = std::array<T, L>;
 
 }  // end namespace chrono_types
 

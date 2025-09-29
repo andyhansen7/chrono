@@ -15,6 +15,7 @@
 #include <cstdio>
 
 #include "chrono/geometry/ChGeometry.h"
+#include "chrono/core/ChVector3.h"
 
 namespace chrono {
 

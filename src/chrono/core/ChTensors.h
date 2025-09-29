@@ -44,59 +44,59 @@ class ChVoightTensor : public ChVectorN<Real, 6> {
 
     /// This method allows assigning Eigen expressions to a ChVoightTensor.
     template <typename OtherDerived>
-    ChVoightTensor& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+    CH_NODISCARD inline ChVoightTensor& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
         this->Eigen::Matrix<Real, 6, 1>::operator=(other);
         return *this;
     }
 
-    inline Real& XX() { return (*this)(0); }
-    inline const Real& XX() const { return (*this)(0); }
+    CH_NODISCARD inline Real& XX() { return (*this)(0); }
+    CH_NODISCARD inline const Real& XX() const { return (*this)(0); }
 
-    inline Real& YY() { return (*this)(1); }
-    inline const Real& YY() const { return (*this)(1); }
+    CH_NODISCARD inline Real& YY() { return (*this)(1); }
+    CH_NODISCARD inline const Real& YY() const { return (*this)(1); }
 
-    inline Real& ZZ() { return (*this)(2); }
-    inline const Real& ZZ() const { return (*this)(2); }
+    CH_NODISCARD inline Real& ZZ() { return (*this)(2); }
+    CH_NODISCARD inline const Real& ZZ() const { return (*this)(2); }
 
-    inline Real& XY() { return (*this)(3); }
-    inline const Real& XY() const { return (*this)(3); }
+    CH_NODISCARD inline Real& XY() { return (*this)(3); }
+    CH_NODISCARD inline const Real& XY() const { return (*this)(3); }
 
-    inline Real& XZ() { return (*this)(4); }
-    inline const Real& XZ() const { return (*this)(4); }
+    CH_NODISCARD inline Real& XZ() { return (*this)(4); }
+    CH_NODISCARD inline const Real& XZ() const { return (*this)(4); }
 
-    inline Real& YZ() { return (*this)(5); }
-    inline const Real& YZ() const { return (*this)(5); }
+    CH_NODISCARD inline Real& YZ() { return (*this)(5); }
+    CH_NODISCARD inline const Real& YZ() const { return (*this)(5); }
 
     /// Convert from a typical 3D rank-two stress or strain tensor (a 3x3 matrix).
     template <class RealB>
     void ConvertFromMatrix(const ChMatrix33<RealB>& msource) {
-        XX() = (Real)msource(0, 0);
-        YY() = (Real)msource(1, 1);
-        ZZ() = (Real)msource(2, 2);
-        XY() = (Real)msource(0, 1);
-        XZ() = (Real)msource(0, 2);
-        YZ() = (Real)msource(1, 2);
+        XX() = static_cast<Real>(msource(0, 0));
+        YY() = static_cast<Real>(msource(1, 1));
+        ZZ() = static_cast<Real>(msource(2, 2));
+        XY() = static_cast<Real>(msource(0, 1));
+        XZ() = static_cast<Real>(msource(0, 2));
+        YZ() = static_cast<Real>(msource(1, 2));
     }
 
     /// Convert to a typical 3D rank-two stress or strain tensor (a 3x3 matrix).
     template <class RealB>
     void ConvertToMatrix(ChMatrix33<RealB>& mdest) {
-        mdest(0, 0) = (RealB)XX();
-        mdest(1, 1) = (RealB)YY();
-        mdest(2, 2) = (RealB)ZZ();
-        mdest(0, 1) = (RealB)XY();
-        mdest(0, 2) = (RealB)XZ();
-        mdest(1, 2) = (RealB)YZ();
-        mdest(1, 0) = (RealB)XY();
-        mdest(2, 0) = (RealB)XZ();
-        mdest(2, 1) = (RealB)YZ();
+        mdest(0, 0) = static_cast<RealB>(XX());
+        mdest(1, 1) = static_cast<RealB>(YY());
+        mdest(2, 2) = static_cast<RealB>(ZZ());
+        mdest(0, 1) = static_cast<RealB>(XY());
+        mdest(0, 2) = static_cast<RealB>(XZ());
+        mdest(1, 2) = static_cast<RealB>(YZ());
+        mdest(1, 0) = static_cast<RealB>(XY());
+        mdest(2, 0) = static_cast<RealB>(XZ());
+        mdest(2, 1) = static_cast<RealB>(YZ());
     }
 
     /// Compute the volumetric part of the tensor, that is the trace V =Txx+Tyy+Tzz.
-    Real GetVolumetricPart() const { return XX() + YY() + ZZ(); }
+    CH_NODISCARD inline Real GetVolumetricPart() const { return XX() + YY() + ZZ(); }
 
     /// Compute the deviatoric part of the tensor, storing it in mdeviatoric.
-    void GetDeviatoricPart(ChVoightTensor<Real>& mdeviatoric) const {
+    inline void GetDeviatoricPart(ChVoightTensor<Real>& mdeviatoric) const {
         Real mM = GetVolumetricPart() * CH_1_3;
         mdeviatoric = *this;
         mdeviatoric.XX() -= mM;
@@ -105,33 +105,33 @@ class ChVoightTensor : public ChVectorN<Real, 6> {
     }
 
     /// Compute the I1 invariant.
-    Real GetInvariant_I1() const { return XX() + YY() + ZZ(); }
+    CH_NODISCARD inline Real GetInvariant_I1() const { return XX() + YY() + ZZ(); }
 
     /// Compute the I2 invariant.
-    Real GetInvariant_I2() const {
+    CH_NODISCARD inline Real GetInvariant_I2() const {
         return XX() * YY() + YY() * ZZ() + XX() * ZZ() - XY() * XY() - YZ() * YZ() - XZ() * XZ();
     }
 
     /// Compute the I3 invariant.
-    Real GetInvariant_I3() const {
+    CH_NODISCARD inline Real GetInvariant_I3() const {
         return XX() * YY() * ZZ() + 2 * XY() * YZ() * XZ() - XY() * XY() * ZZ() - YZ() * YZ() * XX() -
                XZ() * XZ() * YY();
     }
 
     /// Compute the J1 invariant of the deviatoric part (that is always 0).
-    Real GetInvariant_J1() const { return 0; }
+    CH_NODISCARD inline Real GetInvariant_J1() const { return 0; }
 
     /// Compute the J2 invariant of the deviatoric part.
-    Real GetInvariant_J2() const { return std::max(0.0, std::pow(GetInvariant_I1(), 2) * CH_1_3 - GetInvariant_I2()); }
+    CH_NODISCARD inline Real GetInvariant_J2() const { return std::max(0.0, std::pow(GetInvariant_I1(), 2) * CH_1_3 - GetInvariant_I2()); }
 
     /// Compute the J3 invariant of the deviatoric part.
-    Real GetInvariant_J3() const {
+    CH_NODISCARD inline Real GetInvariant_J3() const {
         return std::pow(GetInvariant_I1(), 3) * (2. / 27.) - GetInvariant_I1() * GetInvariant_I2() * CH_1_3 +
                GetInvariant_I3();
     }
 
     /// Rotate to another reference coordinate system, overwriting this tensor in place.
-    void Rotate(ChMatrix33<Real> Rot) {
+    inline void Rotate(const ChMatrix33<Real>& Rot) {
         ChMatrix33<Real> T;
         // do  T'= R*T*R'
         ConvertToMatrix(T);
@@ -141,12 +141,12 @@ class ChVoightTensor : public ChVectorN<Real, 6> {
 
     /// Compute the eigenvalues (closed form method).
     void ComputeEigenvalues(double& e1, double& e2, double& e3) {
-        double I1 = GetInvariant_I1();
-        double I2 = GetInvariant_I2();
-        double I3 = GetInvariant_I3();
-        double phi = CH_1_3 * std::acos((2. * I1 * I1 * I1 - 9. * I1 * I2 + 27. * I3) /
+        const double I1 = GetInvariant_I1();
+        const double I2 = GetInvariant_I2();
+        const double I3 = GetInvariant_I3();
+        const double phi = CH_1_3 * std::acos((2. * I1 * I1 * I1 - 9. * I1 * I2 + 27. * I3) /
                                            (2. * std::pow((I1 * I1 - 3 * I2), (3. / 2.))));
-        double k = CH_2_3 * (std::sqrt(I1 * I1 - 3. * I2));
+        const double k = CH_2_3 * (std::sqrt(I1 * I1 - 3. * I2));
         e1 = (I1 * CH_1_3) + k * std::cos(phi);
         e2 = (I1 * CH_1_3) + k * std::cos(phi + CH_2_3 * chrono::CH_PI);
         e3 = (I1 * CH_1_3) + k * std::cos(phi + CH_4_3 * chrono::CH_PI);
@@ -177,19 +177,19 @@ class ChVoightTensor : public ChVectorN<Real, 6> {
     /// FORMULAS THAT ARE USEFUL FOR YELD CRITERIONS:
 
     /// Compute the Von Mises equivalent.
-    double GetEquivalentVonMises() const {
+    CH_NODISCARD inline double GetEquivalentVonMises() const {
         return std::sqrt(0.5 * (std::pow(XX() - YY(), 2.) + std::pow(YY() - ZZ(), 2.) + std::pow(ZZ() - XX(), 2.)) +
                          3.0 * (XY() * XY() + XZ() * XZ() + YZ() * YZ()));
     }
 
     /// Compute the mean hydrostatic value (aka volumetric, normal).
-    double GetEquivalentMeanHydrostatic() const { return (this->GetInvariant_I1() * CH_1_3); }
+    CH_NODISCARD inline double GetEquivalentMeanHydrostatic() const { return (this->GetInvariant_I1() * CH_1_3); }
 
     /// Compute the octahedral normal invariant (aka hydrostatic, volumetric).
-    double GetEquivalentOctahedralNormal() const { return GetEquivalentMeanHydrostatic(); }
+    CH_NODISCARD inline double GetEquivalentOctahedralNormal() const { return GetEquivalentMeanHydrostatic(); }
 
     /// Compute the octahedral deviatoric invariant (aka shear).
-    double GetEquivalentOctahedralDeviatoric() const { return std::sqrt(CH_2_3 * GetInvariant_J2()); }
+    CH_NODISCARD inline double GetEquivalentOctahedralDeviatoric() const { return std::sqrt(CH_2_3 * GetInvariant_J2()); }
 };
 
 /// Class for stress tensors, in compact Voight notation that is with 6 components in a column.

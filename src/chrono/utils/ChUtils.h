@@ -21,6 +21,7 @@
 #include "chrono/ChConfig.h"
 #include "chrono/core/ChApiCE.h"
 #include "chrono/utils/ChConstants.h"
+#include "chrono/core/ChTypes.h"
 
 namespace chrono {
 
@@ -90,6 +91,28 @@ T ChWrapAngle(T angle, bool symmetric = true) {
             wangle += CH_2PI;
     }
     return wangle;
+}
+
+namespace impl {
+    /** @brief Implementation of the Newton-Raphson square root calculation
+     *
+     *  @return the square root value, as a double
+     */
+    CH_NODISCARD static constexpr inline double
+        sqrt_newton_raphson(const double& x, const double& current, const double& previous) {
+        return current == previous ? current : sqrt_newton_raphson(x, 0.5 * (current + x / current), current);
+    }
+}  // namespace impl
+
+/** @brief Constexpr square root implementation using the Newton-Raphson method
+ *
+ *  @param x the value
+ *
+ *  @return the square root of the provided value
+ */
+CH_NODISCARD static constexpr inline double cesqrt(const double& x) {
+    return x >= 0.0 && x < std::numeric_limits<double>::infinity() ? impl::sqrt_newton_raphson(x, x, 0.0) :
+                                                                        std::numeric_limits<double>::quiet_NaN();
 }
 
 }  // end namespace chrono
