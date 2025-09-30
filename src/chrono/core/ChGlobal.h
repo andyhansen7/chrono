@@ -18,6 +18,8 @@
 
 namespace chrono {
 
+static constexpr inline double FD_STEP = 1e-4; // Forward differentiation stepsize
+
 /// Set the path to the Chrono data directory (ATTENTION: not thread safe).
 ChApi void SetChronoDataPath(const std::string& path);
 

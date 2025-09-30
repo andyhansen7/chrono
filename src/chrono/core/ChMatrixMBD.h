@@ -21,6 +21,7 @@
 
 #include "chrono/core/ChMatrix.h"
 #include "chrono/core/ChCoordsys.h"
+#include "chrono/core/ChTypes.h"
 
 namespace chrono {
 
@@ -47,7 +48,7 @@ using ChMatrix44 = Eigen::Matrix<T, 4, 4, Eigen::RowMajor>;
 template <typename Real = double>
 class ChFpMatrix34 : public ChMatrix34<Real> {
   public:
-    ChFpMatrix34(const ChQuaternion<Real>& q) {
+    explicit ChFpMatrix34(const ChQuaternion<Real>& q) {
         (*this)(0, 0) = q.e1();
         (*this)(0, 1) = q.e0();
         (*this)(0, 2) = -q.e3();
@@ -70,7 +71,7 @@ class ChFpMatrix34 : public ChMatrix34<Real> {
 template <typename Real = double>
 class ChFmMatrix34 : public ChMatrix34<Real> {
   public:
-    ChFmMatrix34(const ChQuaternion<Real>& q) {
+    explicit ChFmMatrix34(const ChQuaternion<Real>& q) {
         (*this)(0, 0) = q.e1();
         (*this)(0, 1) = q.e0();
         (*this)(0, 2) = q.e3();
@@ -94,10 +95,10 @@ class ChFmMatrix34 : public ChMatrix34<Real> {
 template <typename Real = double>
 class ChGlMatrix34 : public ChMatrix34<Real> {
   public:
-    ChGlMatrix34(const ChQuaternion<Real>& q) {
-        Real de0 = 2 * q.e0();
-        Real de1 = 2 * q.e1();
-        Real de2 = 2 * q.e2();
+    explicit ChGlMatrix34(const ChQuaternion<Real>& q) {
+        const Real de0 = 2 * q.e0();
+        const Real de1 = 2 * q.e1();
+        const Real de2 = 2 * q.e2();
         Real de3 = 2 * q.e3();
         (*this)(0, 0) = -de1;
         (*this)(0, 1) = de0;
@@ -118,11 +119,11 @@ class ChGlMatrix34 : public ChMatrix34<Real> {
 
     /// Computes the product v=[Gl(mq)]*qb  without the need of having
     /// the [Gl] matrix (just pass the mq quaternion, since Gl is function of mq)
-    static ChVector3<Real> Gl_times_q(const ChQuaternion<Real>& mq, const ChQuaternion<Real>& q) {
-        Real de0 = 2 * mq.e0();
-        Real de1 = 2 * mq.e1();
-        Real de2 = 2 * mq.e2();
-        Real de3 = 2 * mq.e3();
+    CH_NODISCARD static constexpr inline ChVector3<Real> Gl_times_q(const ChQuaternion<Real>& mq, const ChQuaternion<Real>& q) {
+        const Real de0 = 2 * mq.e0();
+        const Real de1 = 2 * mq.e1();
+        const Real de2 = 2 * mq.e2();
+        const Real de3 = 2 * mq.e3();
         return ChVector3<Real>(-de1 * q.e0() + de0 * q.e1() + de3 * q.e2() - de2 * q.e3(),   //
                                -de2 * q.e0() - de3 * q.e1() + de0 * q.e2() + de1 * q.e3(),   //
                                -de3 * q.e0() + de2 * q.e1() - de1 * q.e2() + de0 * q.e3());  //
@@ -130,11 +131,11 @@ class ChGlMatrix34 : public ChMatrix34<Real> {
 
     /// Computes the product q=[Gl(mq)]*v  without the need of having
     /// the [Gl] matrix (just pass the mq quaternion, since Gl is function of mq)
-    static ChQuaternion<Real> GlT_times_v(const ChQuaternion<Real>& mq, const ChVector3<Real>& v) {
-        Real de0 = 2 * mq.e0();
-        Real de1 = 2 * mq.e1();
-        Real de2 = 2 * mq.e2();
-        Real de3 = 2 * mq.e3();
+    CH_NODISCARD static constexpr inline ChQuaternion<Real> GlT_times_v(const ChQuaternion<Real>& mq, const ChVector3<Real>& v) {
+        const Real de0 = 2 * mq.e0();
+        const Real de1 = 2 * mq.e1();
+        const Real de2 = 2 * mq.e2();
+        const Real de3 = 2 * mq.e3();
         return ChQuaternion<Real>(-de1 * v.x() - de2 * v.y() - de3 * v.z(),   //
                                   +de0 * v.x() - de3 * v.y() + de2 * v.z(),   //
                                   +de3 * v.x() + de0 * v.y() - de1 * v.z(),   //
@@ -147,11 +148,11 @@ class ChGlMatrix34 : public ChMatrix34<Real> {
 template <typename Real = double>
 class ChGwMatrix34 : public ChMatrix34<Real> {
   public:
-    ChGwMatrix34(const ChQuaternion<Real>& q) {
-        Real de0 = 2 * q.e0();
-        Real de1 = 2 * q.e1();
-        Real de2 = 2 * q.e2();
-        Real de3 = 2 * q.e3();
+    explicit ChGwMatrix34(const ChQuaternion<Real>& q) {
+        const Real de0 = 2 * q.e0();
+        const Real de1 = 2 * q.e1();
+        const Real de2 = 2 * q.e2();
+        const Real de3 = 2 * q.e3();
         (*this)(0, 0) = -de1;
         (*this)(0, 1) = de0;
         (*this)(0, 2) = -de3;
@@ -178,7 +179,7 @@ class ChStarMatrix33 : public Eigen::Matrix<Real, 3, 3, Eigen::RowMajor> {
   public:
     /// Construct a 3x3 "star matrix" (aka "tilde matrix") for matrix form of cross product.
     /// If a and b are 3d vectors, then a x b = [Astar(a)] * b.
-    ChStarMatrix33(const ChVector3<Real>& v) {
+    explicit ChStarMatrix33(const ChVector3<Real>& v) {
         (*this)(0, 0) = 0;
         (*this)(0, 1) = -v.z();
         (*this)(0, 2) = v.y();
@@ -207,7 +208,7 @@ class ChStarMatrix33 : public Eigen::Matrix<Real, 3, 3, Eigen::RowMajor> {
     using Eigen::Matrix<Real, 3, 3, Eigen::RowMajor>::operator*;
 
     /// Multiply this matrix by a 3d vector.
-    ChVector3<Real> operator*(const ChVector3<Real>& v) const {
+    CH_NODISCARD ChVector3<Real> operator*(const ChVector3<Real>& v) const {
         return ChVector3<Real>((*this)(0, 0) * v.x() + (*this)(0, 1) * v.y() + (*this)(0, 2) * v.z(),
                                (*this)(1, 0) * v.x() + (*this)(1, 1) * v.y() + (*this)(1, 2) * v.z(),
                                (*this)(2, 0) * v.x() + (*this)(2, 1) * v.y() + (*this)(2, 2) * v.z());
@@ -223,7 +224,7 @@ template <typename Real = double>
 class ChStarMatrix44 : public ChMatrix44<Real> {
   public:
     /// Constructor from a given quaternion.
-    ChStarMatrix44(const ChQuaternion<Real>& q) {
+    explicit ChStarMatrix44(const ChQuaternion<Real>& q) {
         (*this)(0, 0) = q.e0();
         (*this)(0, 1) = -q.e1();
         (*this)(0, 2) = -q.e2();
@@ -268,37 +269,37 @@ class ChStarMatrix44 : public ChMatrix44<Real> {
 
 /// Multiply a 3x4 matrix with a quaternion and return a 3d vector.
 template <typename T, typename U>
-ChVector3<T> operator*(const ChMatrix34<T>& A, const ChQuaternion<U>& q) {
-    return ChVector3<T>(A(0, 0) * (T)q.e0() + A(0, 1) * (T)q.e1() + A(0, 2) * (T)q.e2() + A(0, 3) * (T)q.e3(),
-                        A(1, 0) * (T)q.e0() + A(1, 1) * (T)q.e1() + A(1, 2) * (T)q.e2() + A(1, 3) * (T)q.e3(),
-                        A(2, 0) * (T)q.e0() + A(2, 1) * (T)q.e1() + A(2, 2) * (T)q.e2() + A(2, 3) * (T)q.e3());
+CH_NODISCARD inline ChVector3<T> operator*(const ChMatrix34<T>& A, const ChQuaternion<U>& q) {
+    return ChVector3<T>(A(0, 0) * static_cast<T>(q.e0()) + A(0, 1) * static_cast<T>(q.e1()) + A(0, 2) * static_cast<T>(q.e2()) + A(0, 3) * static_cast<T>(q.e3()),
+                        A(1, 0) * static_cast<T>(q.e0()) + A(1, 1) * static_cast<T>(q.e1()) + A(1, 2) * static_cast<T>(q.e2()) + A(1, 3) * static_cast<T>(q.e3()),
+                        A(2, 0) * static_cast<T>(q.e0()) + A(2, 1) * static_cast<T>(q.e1()) + A(2, 2) * static_cast<T>(q.e2()) + A(2, 3) * static_cast<T>(q.e3()));
 }
 
 /// Multiply a 4x3 matrix with a 3d vector and return a quaternion.
 template <typename T, typename U>
-ChQuaternion<T> operator*(const ChMatrix43<T>& A, const ChVector3<U>& v) {
-    return ChQuaternion<T>(A(0, 0) * (T)v.x() + A(0, 1) * (T)v.y() + A(0, 2) * (T)v.z(),
-                           A(1, 0) * (T)v.x() + A(1, 1) * (T)v.y() + A(1, 2) * (T)v.z(),
-                           A(2, 0) * (T)v.x() + A(2, 1) * (T)v.y() + A(2, 2) * (T)v.z(),
-                           A(3, 0) * (T)v.x() + A(3, 1) * (T)v.y() + A(3, 2) * (T)v.z());
+CH_NODISCARD inline ChQuaternion<T> operator*(const ChMatrix43<T>& A, const ChVector3<U>& v) {
+    return ChQuaternion<T>(A(0, 0) * static_cast<T>(v.x()) + A(0, 1) * static_cast<T>(v.y()) + A(0, 2) * static_cast<T>(v.z()),
+                           A(1, 0) * static_cast<T>(v.x()) + A(1, 1) * static_cast<T>(v.y()) + A(1, 2) * static_cast<T>(v.z()),
+                           A(2, 0) * static_cast<T>(v.x()) + A(2, 1) * static_cast<T>(v.y()) + A(2, 2) * static_cast<T>(v.z()),
+                           A(3, 0) * static_cast<T>(v.x()) + A(3, 1) * static_cast<T>(v.y()) + A(3, 2) * static_cast<T>(v.z()));
 }
 
 /// Multiply the transpose of a 3x4 matrix with a 3d vector and return a quaternion.
 template <typename T, typename U>
-ChQuaternion<T> operator*(const Eigen::Transpose<Eigen::Matrix<T, 3, 4, Eigen::RowMajor>>& A, const ChVector3<U>& v) {
-    return ChQuaternion<T>(A(0, 0) * (T)v.x() + A(0, 1) * (T)v.y() + A(0, 2) * (T)v.z(),
-                           A(1, 0) * (T)v.x() + A(1, 1) * (T)v.y() + A(1, 2) * (T)v.z(),
-                           A(2, 0) * (T)v.x() + A(2, 1) * (T)v.y() + A(2, 2) * (T)v.z(),
-                           A(3, 0) * (T)v.x() + A(3, 1) * (T)v.y() + A(3, 2) * (T)v.z());
+CH_NODISCARD inline ChQuaternion<T> operator*(const Eigen::Transpose<Eigen::Matrix<T, 3, 4, Eigen::RowMajor>>& A, const ChVector3<U>& v) {
+    return ChQuaternion<T>(A(0, 0) * static_cast<T>(v.x()) + A(0, 1) * static_cast<T>(v.y()) + A(0, 2) * static_cast<T>(v.z()),
+                           A(1, 0) * static_cast<T>(v.x()) + A(1, 1) * static_cast<T>(v.y()) + A(1, 2) * static_cast<T>(v.z()),
+                           A(2, 0) * static_cast<T>(v.x()) + A(2, 1) * static_cast<T>(v.y()) + A(2, 2) * static_cast<T>(v.z()),
+                           A(3, 0) * static_cast<T>(v.x()) + A(3, 1) * static_cast<T>(v.y()) + A(3, 2) * static_cast<T>(v.z()));
 }
 
 /// Multiply a 4x4 matrix with a quaternion and return a quaternion.
 template <typename T, typename U>
-ChQuaternion<T> operator*(const ChMatrix44<T>& A, const ChQuaternion<U>& q) {
-    return ChQuaternion<T>(A(0, 0) * (T)q.e0() + A(0, 1) * (T)q.e1() + A(0, 2) * (T)q.e2() + A(0, 3) * (T)q.e3(),
-                           A(1, 0) * (T)q.e0() + A(1, 1) * (T)q.e1() + A(1, 2) * (T)q.e2() + A(1, 3) * (T)q.e3(),
-                           A(2, 0) * (T)q.e0() + A(2, 1) * (T)q.e1() + A(2, 2) * (T)q.e2() + A(2, 3) * (T)q.e3(),
-                           A(3, 0) * (T)q.e0() + A(3, 1) * (T)q.e1() + A(3, 2) * (T)q.e2() + A(3, 3) * (T)q.e3());
+CH_NODISCARD inline ChQuaternion<T> operator*(const ChMatrix44<T>& A, const ChQuaternion<U>& q) {
+    return ChQuaternion<T>(A(0, 0) * static_cast<T>(q.e0()) + A(0, 1) * static_cast<T>(q.e1()) + A(0, 2) * static_cast<T>(q.e2()) + A(0, 3) * static_cast<T>(q.e3()),
+                           A(1, 0) * static_cast<T>(q.e0()) + A(1, 1) * static_cast<T>(q.e1()) + A(1, 2) * static_cast<T>(q.e2()) + A(1, 3) * static_cast<T>(q.e3()),
+                           A(2, 0) * static_cast<T>(q.e0()) + A(2, 1) * static_cast<T>(q.e1()) + A(2, 2) * static_cast<T>(q.e2()) + A(2, 3) * static_cast<T>(q.e3()),
+                           A(3, 0) * static_cast<T>(q.e0()) + A(3, 1) * static_cast<T>(q.e1()) + A(3, 2) * static_cast<T>(q.e2()) + A(3, 3) * static_cast<T>(q.e3()));
 }
 
 /// @} chrono_linalg

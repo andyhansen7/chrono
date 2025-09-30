@@ -27,7 +27,7 @@ namespace chrono {
 /// The sparsity pattern can then be applied to a given sparse matrix.
 class ChSparsityPatternLearner : public Eigen::SparseMatrix<double, Eigen::RowMajor, int> {
   public:
-    ChSparsityPatternLearner(int nrows, int ncols) : ChSparseMatrix(nrows, ncols), processed(false) {
+    ChSparsityPatternLearner(const unsigned& nrows, const unsigned& ncols) : ChSparseMatrix(nrows, ncols), processed(false) {
         // RowMajor: outerSize == nrows
         // ColMajor: outerSize == ncols
         innerVectors.resize(outerSize());
@@ -38,7 +38,7 @@ class ChSparsityPatternLearner : public Eigen::SparseMatrix<double, Eigen::RowMa
     virtual void SetElement(int row, int col, double val, bool overwrite = true) override {
         const Index outer = IsRowMajor ? row : col;
         const Index inner = IsRowMajor ? col : row;
-        innerVectors[outer].push_back((int)inner);
+        innerVectors[outer].push_back(static_cast<int>(inner));
     }
 
     void Apply(ChSparseMatrix& mat) {

@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     // Define a y=f(x) function by inheriting ChIntegrand1D:
     class MySine1d : public ChIntegrand1D<double> {
       public:
-        void Evaluate(double& result, const double x) { result = std::sin(x); }
+        void Evaluate(double& result, const double& x) { result = std::sin(x); }
     };
 
     // Create an object from the function class
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
     // Other quadrature tests, this time in 2D
     class MySine2d : public ChIntegrand2D<double> {
       public:
-        void Evaluate(double& result, const double x, const double y) { result = std::sin(x); }
+        void Evaluate(double& result, const double& x, const double& y) { result = std::sin(x); }
     };
 
     MySine2d mfx2d;
@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
     // Other quadrature tests, this time with vector function (that is, integrates 2x1 matrix)
     class MySine2dM : public ChIntegrand2D<ChMatrixNM<double, 1, 2>> {
       public:
-        void Evaluate(ChMatrixNM<double, 1, 2>& result, const double x, const double y) {
+        void Evaluate(ChMatrixNM<double, 1, 2>& result, const double& x, const double& y) {
             result(0, 0) = x * y;
             result(0, 1) = 0.5 * y * y;
         }

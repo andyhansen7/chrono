@@ -31,7 +31,7 @@ class ChRealtimeStepTimer : public ChTimer {
     /// passing it the integration step size used at this step. If the time elapsed over the last step (i.e., from
     /// the last call to Spin) is small than the integration step size, this function will spin in place until real time
     /// catches up with the simulation time, thus providing soft real-time capabilities.
-    void Spin(double step) {
+    void Spin(const double& step) {
         while (GetTimeSeconds() < step) {
         }
         reset();

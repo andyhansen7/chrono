@@ -25,10 +25,10 @@ namespace chrono {
 class ChApi ChRandom {
   public:
     /// Get a random number in the interval [0, 1)
-    static double Get();
+    CH_NODISCARD static inline double Get();
 
     /// Seeds the random number generator to allow a repeatable generation.
-    static void SetSeed(double seed);
+    static inline void SetSeed(const double& seed);
 
     ChRandom(const ChRandom&) = delete;
     ChRandom& operator=(const ChRandom&) = delete;
@@ -55,18 +55,18 @@ class ChApi ChDistribution {
     virtual ~ChDistribution() {}
 
     /// Compute a random value whose probability is defined by the distribution.
-    virtual double GetRandom() = 0;
+    CH_NODISCARD virtual double GetRandom() = 0;
 };
 
 /// Class for a distribution with a single 'value' that has probability 1.0.
 /// (that is, the distribution has a spike corresponding to 'value' and zero elsewhere).
 class ChApi ChConstantDistribution : public ChDistribution {
   public:
-    ChConstantDistribution(double value) : m_value(value) {}
+    ChConstantDistribution(const double& value) : m_value(value) {}
 
     /// Compute a random value whose probability is defined by the distribution.
     /// In this very simple case, returns always the single value.
-    virtual double GetRandom() override { return m_value; }
+    CH_NODISCARD virtual double GetRandom() override { return m_value; }
 
   private:
     double m_value;
@@ -75,11 +75,11 @@ class ChApi ChConstantDistribution : public ChDistribution {
 /// Class for a distribution with uniform probability between a lower 'min' value and upper 'max' value.
 class ChApi ChUniformDistribution : public ChDistribution {
   public:
-    ChUniformDistribution(double min = 0.0, double max = 1.0);
+    ChUniformDistribution(const double& min = 0.0, const double& max = 1.0);
 
     /// Compute a random value whose probability is defined by the distribution,
     /// that is a value between min and max.
-    virtual double GetRandom() override;
+    CH_NODISCARD virtual double GetRandom() override;
 
   private:
     std::random_device m_rand_device;                       ///< random number generator
@@ -91,14 +91,14 @@ class ChApi ChUniformDistribution : public ChDistribution {
 class ChApi ChNormalDistribution : public ChDistribution {
   public:
     /// Create a Normal distribution with assigned mean and standard deviation.
-    ChNormalDistribution(double mean = 0, double std_dev = 1);
+    ChNormalDistribution(const double& mean = 0, const double& std_dev = 1);
 
     /// Compute a random value whose probability density is the normal distribution.
-    virtual double GetRandom() override;
+    CH_NODISCARD virtual double GetRandom() override;
 
-    double GetMean() const { return m_mean; }
+    CH_NODISCARD inline double GetMean() const { return m_mean; }
 
-    double GetSTD() const { return m_std_dev; }
+    CH_NODISCARD inline double GetSTD() const { return m_std_dev; }
 
   private:
     std::random_device m_rand_device;                 ///< random number generator
@@ -120,14 +120,14 @@ class ChApi ChWeibullDistribution : public ChDistribution {
     /// - for shape param < 1, there is a vertical peak at 0
     /// - for shape param = 1, you get an exponential distribution
     /// - for shape param > 1, you get an asymmetric bell shape
-    ChWeibullDistribution(double shape_param, double scale_param);
+    ChWeibullDistribution(const double& shape_param, const double& scale_param);
 
     /// Compute a random value whose probability density is the Weibull distribution.
-    virtual double GetRandom() override;
+    CH_NODISCARD virtual double GetRandom() override;
 
-    double GetShapeParam() const { return m_shape_param; }
+    CH_NODISCARD inline double GetShapeParam() const { return m_shape_param; }
 
-    double GetScaleParam() const { return m_scale_param; }
+    CH_NODISCARD inline double GetScaleParam() const { return m_scale_param; }
 
   private:
     std::random_device m_rand_device;                  ///< random number generator
@@ -144,15 +144,15 @@ class ChApi ChZhangDistribution : public ChDistribution {
   public:
     /// Create the Zhang distribution with average and minimum particle size.
     /// Usually is average : minimum = 3.25 : 1
-    ChZhangDistribution(double average_size, double minimum_size);
+    ChZhangDistribution(const double& average_size, const double& minimum_size);
 
     /// Compute a random value whose probability density is the Weibull distribution.
     /// It uses the "Smirnov transform" (inverse probability integral transform)
-    virtual double GetRandom() override;
+    CH_NODISCARD virtual double GetRandom() override;
 
-    double GetMinSize() const { return m_min_size; }
+    CH_NODISCARD inline double GetMinSize() const { return m_min_size; }
 
-    double GetAverageSize() const { return (m_min_size + (1.0 / m_lambda_r)); }
+    CH_NODISCARD inline double GetAverageSize() const { return (m_min_size + (1.0 / m_lambda_r)); }
 
   private:
     std::random_device m_rand_device;
@@ -175,7 +175,7 @@ class ChApi ChContinuumDistribution : public ChDistribution {
     /// must be unit, i.e normalized (but if not, a normalization will be enforced)
     /// Note: too few points means approximate results, but too many points might give a
     /// small performance overhead when calling GetRandom().
-    ChContinuumDistribution(ChVectorDynamic<>& x, ChVectorDynamic<>& y);
+    ChContinuumDistribution(const ChVectorDynamic<>& x, const ChVectorDynamic<>& y);
 
     ~ChContinuumDistribution() {}
 
@@ -183,13 +183,13 @@ class ChApi ChContinuumDistribution : public ChDistribution {
     /// been entered with x,y points during the creation of this object.
     virtual double GetRandom() override;
 
-    const ChVectorDynamic<>& GetProbabilityXPoints() const { return m_x; }
+    CH_NODISCARD inline const ChVectorDynamic<>& GetProbabilityXPoints() const { return m_x; }
 
-    const ChVectorDynamic<>& GetProbabilityYPoints() const { return m_y; }
+    CH_NODISCARD inline const ChVectorDynamic<>& GetProbabilityYPoints() const { return m_y; }
 
-    const ChVectorDynamic<>& GetProbabilityCDFCumulativeX() const { return m_cdf_x; }
+    CH_NODISCARD inline const ChVectorDynamic<>& GetProbabilityCDFCumulativeX() const { return m_cdf_x; }
 
-    const ChVectorDynamic<>& GetProbabilityCDFCumulativeY() const { return m_cdf_y; }
+    CH_NODISCARD inline const ChVectorDynamic<>& GetProbabilityCDFCumulativeY() const { return m_cdf_y; }
 
   private:
     std::random_device m_rand_device;
@@ -213,7 +213,7 @@ class ChApi ChDiscreteDistribution : public ChDistribution {
     /// For example, to get '12.3' for 30% of the times you call GetRandom(), and '150' for
     /// the remaining 70% of the times, create ChDiscreteDistribution with
     /// x = [12.3; 150] and y = [0.3; 0.7]
-    ChDiscreteDistribution(ChVectorDynamic<>& discrete_values, ChVectorDynamic<>& probabilities);
+    ChDiscreteDistribution(const ChVectorDynamic<>& discrete_values, const ChVectorDynamic<>& probabilities);
 
     ~ChDiscreteDistribution() {}
 
@@ -221,9 +221,9 @@ class ChApi ChDiscreteDistribution : public ChDistribution {
     /// when you created this object
     virtual double GetRandom() override;
 
-    const ChVectorDynamic<>& GetProbabilityXPoints() const { return m_x; }
-    const ChVectorDynamic<>& GetProbabilityYPoints() const { return m_y; }
-    const ChVectorDynamic<>& GetProbabilityCDFCumulativeY() const { return m_cdf_y; }
+    CH_NODISCARD inline const ChVectorDynamic<>& GetProbabilityXPoints() const { return m_x; }
+    CH_NODISCARD inline const ChVectorDynamic<>& GetProbabilityYPoints() const { return m_y; }
+    CH_NODISCARD inline const ChVectorDynamic<>& GetProbabilityCDFCumulativeY() const { return m_cdf_y; }
 
   private:
     std::random_device m_rand_device;

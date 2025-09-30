@@ -72,7 +72,7 @@ void ChLinkNodeSlopeFrame::Update(double time, bool update_assets) {
 }
 
 ChVectorDynamic<> ChLinkNodeSlopeFrame::GetConstraintViolation() const {
-    ChMatrix33<> Arw = m_csys.rot >> m_body->GetRot();
+    ChMatrix33<> Arw(m_csys.rot >> m_body->GetRot());
     ChVector3d res = Arw.transpose() * m_node->GetSlope1();
     ChVectorN<double, 2> C;
     C(0) = res.y();
@@ -132,7 +132,7 @@ void ChLinkNodeSlopeFrame::IntLoadConstraint_C(const unsigned int off_L,  // off
     if (!IsActive())
         return;
 
-    ChMatrix33<> Arw = m_csys.rot >> m_body->GetRot();
+    ChMatrix33<> Arw(m_csys.rot >> m_body->GetRot());
     ChVector3d cres = c * (Arw.transpose() * m_node->GetSlope1());
 
     if (do_clamp) {
@@ -190,7 +190,7 @@ void ChLinkNodeSlopeFrame::ConstraintsBiLoad_C(double factor, double recovery_cl
     // if (!IsActive())
     //	return;
 
-    ChMatrix33<> Arw = m_csys.rot >> m_body->GetRot();
+    ChMatrix33<> Arw(m_csys.rot >> m_body->GetRot());
     ChVector3d res = Arw.transpose() * m_node->GetSlope1();
 
     constraint1.SetRightHandSide(constraint1.GetRightHandSide() + factor * res.y());

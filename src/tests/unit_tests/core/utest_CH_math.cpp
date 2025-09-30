@@ -33,7 +33,7 @@ const double ABS_ERR = 1e-8;
 TEST(MathTest, quadrature) {
     class MySine1d : public ChIntegrand1D<double> {
       public:
-        void Evaluate(double& result, const double x) { result = std::sin(x); }
+        void Evaluate(double& result, const double& x) { result = std::sin(x); }
     };
 
     MySine1d mfx;
@@ -44,7 +44,7 @@ TEST(MathTest, quadrature) {
 
     class MySine2d : public ChIntegrand2D<double> {
       public:
-        void Evaluate(double& result, const double x, const double y) { result = std::sin(x); }
+        void Evaluate(double& result, const double& x, const double& y) { result = std::sin(x); }
     };
 
     MySine2d mfx2d;
@@ -55,7 +55,7 @@ TEST(MathTest, quadrature) {
 
     class MySine2dM : public ChIntegrand2D<ChMatrixNM<double, 1, 2>> {
       public:
-        void Evaluate(ChMatrixNM<double, 1, 2>& result, const double x, const double y) {
+        void Evaluate(ChMatrixNM<double, 1, 2>& result, const double& x, const double& y) {
             result(0, 0) = x * y;
             result(0, 1) = 0.5 * y * y;
         }

@@ -186,10 +186,10 @@ class BeamTaperedTimoshenkoFPM : public ChIntegrand1D<ChMatrixNM<double, 12, 12>
     // 2: mass matix
     int m_choice_KiRiMi = 0;
 
-    virtual void Evaluate(ChMatrixNM<double, 12, 12>& result, const double x) override;
+    virtual void Evaluate(ChMatrixNM<double, 12, 12>& result, const double& x) override;
 };
 
-void BeamTaperedTimoshenkoFPM::Evaluate(ChMatrixNM<double, 12, 12>& result, const double x) {
+void BeamTaperedTimoshenkoFPM::Evaluate(ChMatrixNM<double, 12, 12>& result, const double& x) {
     double eta = x;
 
     ChElementBeamTaperedTimoshenkoFPM::ShapeFunctionGroupFPM NxBx;

@@ -187,10 +187,10 @@ class Brick9_Mass : public ChIntegrand3D<ChMatrixNM<double, 33, 33>> {
   private:
     ChElementHexaANCF_3813_9* m_element;
 
-    virtual void Evaluate(ChMatrixNM<double, 33, 33>& result, const double x, const double y, const double z) override;
+    virtual void Evaluate(ChMatrixNM<double, 33, 33>& result, const double& x, const double& y, const double& z) override;
 };
 
-void Brick9_Mass::Evaluate(ChMatrixNM<double, 33, 33>& result, const double x, const double y, const double z) {
+void Brick9_Mass::Evaluate(ChMatrixNM<double, 33, 33>& result, const double& x, const double& y, const double& z) {
     ChElementHexaANCF_3813_9::ShapeVector N;
     m_element->ShapeFunctions(N, x, y, z);
 
@@ -237,11 +237,11 @@ class Brick9_Gravity : public ChIntegrand3D<ChVectorN<double, 11>> {
   private:
     ChElementHexaANCF_3813_9* m_element;
 
-    virtual void Evaluate(ChVectorN<double, 11>& result, const double x, const double y, const double z) override;
+    virtual void Evaluate(ChVectorN<double, 11>& result, const double& x, const double& y, const double& z) override;
 };
 
 // Evaluate integrand at the specified point
-void Brick9_Gravity::Evaluate(ChVectorN<double, 11>& result, const double x, const double y, const double z) {
+void Brick9_Gravity::Evaluate(ChVectorN<double, 11>& result, const double& x, const double& y, const double& z) {
     ChElementHexaANCF_3813_9::ShapeVector N;
     m_element->ShapeFunctions(N, x, y, z);
 
@@ -290,11 +290,11 @@ class Brick9_Force : public ChIntegrand3D<ChVectorN<double, 33>> {
 
   private:
     ChElementHexaANCF_3813_9* m_element;
-    virtual void Evaluate(ChVectorN<double, 33>& result, const double x, const double y, const double z) override;
+    virtual void Evaluate(ChVectorN<double, 33>& result, const double& x, const double& y, const double& z) override;
 };
 
 // Evaluate integrand at the specified point
-void Brick9_Force::Evaluate(ChVectorN<double, 33>& result, const double x, const double y, const double z) {
+void Brick9_Force::Evaluate(ChVectorN<double, 33>& result, const double& x, const double& y, const double& z) {
     ChElementHexaANCF_3813_9::ShapeVector N;
     m_element->ShapeFunctions(N, x, y, z);
 
@@ -1285,11 +1285,11 @@ class Brick9_Jacobian : public ChIntegrand3D<ChMatrixNM<double, 33, 33>> {
     ChMatrixNM<double, 33, 33> m_KTE1;
     ChMatrixNM<double, 33, 33> m_KTE2;
 
-    virtual void Evaluate(ChMatrixNM<double, 33, 33>& result, const double x, const double y, const double z) override;
+    virtual void Evaluate(ChMatrixNM<double, 33, 33>& result, const double& x, const double& y, const double& z) override;
 };
 
 // Evaluate integrand at the specified point
-void Brick9_Jacobian::Evaluate(ChMatrixNM<double, 33, 33>& result, const double x, const double y, const double z) {
+void Brick9_Jacobian::Evaluate(ChMatrixNM<double, 33, 33>& result, const double& x, const double& y, const double& z) {
     ChElementHexaANCF_3813_9::ShapeVector N;
     m_element->ShapeFunctions(N, x, y, z);
 

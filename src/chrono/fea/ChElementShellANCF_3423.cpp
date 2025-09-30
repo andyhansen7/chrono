@@ -188,10 +188,10 @@ class ShellANCF_Mass : public ChIntegrand3D<ChMatrixNM<double, 24, 24>> {
   private:
     ChElementShellANCF_3423* m_element;
 
-    virtual void Evaluate(ChMatrixNM<double, 24, 24>& result, const double x, const double y, const double z) override;
+    virtual void Evaluate(ChMatrixNM<double, 24, 24>& result, const double& x, const double& y, const double& z) override;
 };
 
-void ShellANCF_Mass::Evaluate(ChMatrixNM<double, 24, 24>& result, const double x, const double y, const double z) {
+void ShellANCF_Mass::Evaluate(ChMatrixNM<double, 24, 24>& result, const double& x, const double& y, const double& z) {
     ChElementShellANCF_3423::ShapeVector N;
     m_element->ShapeFunctions(N, x, y, z);
 
@@ -251,15 +251,15 @@ class ShellANCF_Gravity : public ChIntegrand3D<ChElementShellANCF_3423::VectorN>
     ChElementShellANCF_3423* m_element;
 
     virtual void Evaluate(ChElementShellANCF_3423::VectorN& result,
-                          const double x,
-                          const double y,
-                          const double z) override;
+                          const double& x,
+                          const double& y,
+                          const double& z) override;
 };
 
 void ShellANCF_Gravity::Evaluate(ChElementShellANCF_3423::VectorN& result,
-                                 const double x,
-                                 const double y,
-                                 const double z) {
+                                 const double& x,
+                                 const double& y,
+                                 const double& z) {
     ChElementShellANCF_3423::ShapeVector N;
     m_element->ShapeFunctions(N, x, y, z);
 
@@ -329,10 +329,10 @@ class ShellANCF_Force : public ChIntegrand3D<ChVectorN<double, 54>> {
     ChVectorN<double, 5>* m_alpha_eas;
 
     /// Evaluate (strainD'*strain)  at point x, include ANS and EAS.
-    virtual void Evaluate(ChVectorN<double, 54>& result, const double x, const double y, const double z) override;
+    virtual void Evaluate(ChVectorN<double, 54>& result, const double& x, const double& y, const double& z) override;
 };
 
-void ShellANCF_Force::Evaluate(ChVectorN<double, 54>& result, const double x, const double y, const double z) {
+void ShellANCF_Force::Evaluate(ChVectorN<double, 54>& result, const double& x, const double& y, const double& z) {
     // Element shape function
     ChElementShellANCF_3423::ShapeVector N;
     m_element->ShapeFunctions(N, x, y, z);
@@ -670,10 +670,10 @@ class ShellANCF_Jacobian : public ChIntegrand3D<ChVectorN<double, 696>> {
     size_t m_kl;
 
     // Evaluate integrand at the specified point.
-    virtual void Evaluate(ChVectorN<double, 696>& result, const double x, const double y, const double z) override;
+    virtual void Evaluate(ChVectorN<double, 696>& result, const double& x, const double& y, const double& z) override;
 };
 
-void ShellANCF_Jacobian::Evaluate(ChVectorN<double, 696>& result, const double x, const double y, const double z) {
+void ShellANCF_Jacobian::Evaluate(ChVectorN<double, 696>& result, const double& x, const double& y, const double& z) {
     // Element shape function
     ChElementShellANCF_3423::ShapeVector N;
     m_element->ShapeFunctions(N, x, y, z);

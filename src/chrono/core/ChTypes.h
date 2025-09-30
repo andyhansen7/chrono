@@ -35,9 +35,9 @@ namespace chrono_types {
 template <class T>
 class class_has_custom_new_operator {
     template <typename C>
-    static inline char test(decltype(C::operator new(sizeof(C))));
+    CH_NODISCARD static inline char test(decltype(C::operator new(sizeof(C))));
     template <typename C>
-    static inline long test(...);
+    CH_NODISCARD static inline long test(...);
 
   public:
     enum { value = sizeof(test<T>(nullptr)) == sizeof(char) };
@@ -70,7 +70,7 @@ class class_has_custom_new_operator {
 
 // C++14 version
 template <typename T, typename... Args, std::enable_if_t<class_has_custom_new_operator<T>::value, int> = 0>
-inline std::shared_ptr<T> make_shared(Args&&... args) {
+CH_NODISCARD inline std::shared_ptr<T> make_shared(Args&&... args) {
     return std::shared_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
@@ -87,7 +87,7 @@ inline std::shared_ptr<T> make_shared(Args&&... args) {
 
 // C++14 version
 template <typename T, typename... Args, std::enable_if_t<!class_has_custom_new_operator<T>::value, int> = 0>
-inline std::shared_ptr<T> make_shared(Args&&... args) {
+CH_NODISCARD inline std::shared_ptr<T> make_shared(Args&&... args) {
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
@@ -105,23 +105,23 @@ inline std::shared_ptr<T> make_shared(Args&&... args) {
 
 // C++14 version - make_unique for classes with overriden operator new.
 template <typename T, typename... Args, std::enable_if_t<class_has_custom_new_operator<T>::value, int> = 0>
-inline std::unique_ptr<T> make_unique(Args&&... args) {
+CH_NODISCARD inline std::unique_ptr<T> make_unique(Args&&... args) {
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
 // C++14 version - make_unique for classes with no overriden operator new.
 template <typename T, typename... Args, std::enable_if_t<!class_has_custom_new_operator<T>::value, int> = 0>
-inline std::unique_ptr<T> make_unique(Args&&... args) {
+CH_NODISCARD inline std::unique_ptr<T> make_unique(Args&&... args) {
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
 // Helper to detect if a type is constexpr constructible
 template <typename T, int = (T{}, 0)>
-constexpr bool is_constexpr_constructible (int)
+CH_NODISCARD constexpr bool is_constexpr_constructible (int)
 { return true; }
 
 template <typename>
-constexpr bool is_constexpr_constructible (long)
+CH_NODISCARD bool is_constexpr_constructible (long)
 { return false; }
 
 // Type aliases

@@ -80,7 +80,7 @@ class ChVoightTensor : public ChVectorN<Real, 6> {
 
     /// Convert to a typical 3D rank-two stress or strain tensor (a 3x3 matrix).
     template <class RealB>
-    void ConvertToMatrix(ChMatrix33<RealB>& mdest) {
+    void ConvertToMatrix(ChMatrix33<RealB>& mdest)  const{
         mdest(0, 0) = static_cast<RealB>(XX());
         mdest(1, 1) = static_cast<RealB>(YY());
         mdest(2, 2) = static_cast<RealB>(ZZ());
@@ -140,7 +140,7 @@ class ChVoightTensor : public ChVectorN<Real, 6> {
     }
 
     /// Compute the eigenvalues (closed form method).
-    void ComputeEigenvalues(double& e1, double& e2, double& e3) {
+    inline void ComputeEigenvalues(double& e1, double& e2, double& e3) const {
         const double I1 = GetInvariant_I1();
         const double I2 = GetInvariant_I2();
         const double I3 = GetInvariant_I3();
@@ -158,7 +158,7 @@ class ChVoightTensor : public ChVectorN<Real, 6> {
                              double& eigval3,
                              ChVector3<Real>& eigvector1,
                              ChVector3<Real>& eigvector2,
-                             ChVector3<Real>& eigvector3) {
+                             ChVector3<Real>& eigvector3) const {
         ChMatrix33<Real> A;
         this->ConvertToMatrix(A);
 
@@ -205,13 +205,13 @@ class ChStressTensor : public ChVoightTensor<Real> {
 
     /// This method allows assigning Eigen expressions to a ChStressTensor.
     template <typename OtherDerived>
-    ChStressTensor& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+    CH_NODISCARD ChStressTensor& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
         this->Eigen::Matrix<Real, 6, 1>::operator=(other);
         return *this;
     }
 
     /// Compute the principal stresses for the given tensor.
-    void ComputePrincipalStresses(double& e1, double& e2, double& e3) {
+    void ComputePrincipalStresses(double& e1, double& e2, double& e3) const {
         ChVoightTensor<Real>::ComputeEigenvalues(e1, e2, e3);
     }
 
@@ -222,7 +222,7 @@ class ChStressTensor : public ChVoightTensor<Real> {
                                             double& e3,
                                             ChVector3<Real>& dir1,
                                             ChVector3<Real>& dir2,
-                                            ChVector3<Real>& dir3) {
+                                            ChVector3<Real>& dir3) const {
         ChVoightTensor<Real>::ComputeEigenvectors(e1, e2, e3, dir1, dir2, dir3);
     }
 };
@@ -240,13 +240,13 @@ class ChStrainTensor : public ChVoightTensor<Real> {
 
     /// This method allows assigning Eigen expressions to a ChStrainTensor.
     template <typename OtherDerived>
-    ChStrainTensor& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
+    CH_NODISCARD ChStrainTensor& operator=(const Eigen::MatrixBase<OtherDerived>& other) {
         this->Eigen::Matrix<Real, 6, 1>::operator=(other);
         return *this;
     }
 
     /// Compute the principal strains for the given tensor.
-    void ComputePrincipalStrains(double& e1, double& e2, double& e3) {
+    void ComputePrincipalStrains(double& e1, double& e2, double& e3) const {
         ChVoightTensor<Real>::ComputeEigenvalues(e1, e2, e3);
     }
 
@@ -257,7 +257,7 @@ class ChStrainTensor : public ChVoightTensor<Real> {
                                            double& e3,
                                            ChVector3<Real>& dir1,
                                            ChVector3<Real>& dir2,
-                                           ChVector3<Real>& dir3) {
+                                           ChVector3<Real>& dir3) const {
         ChVoightTensor<Real>::ComputeEigenvectors(e1, e2, e3, dir1, dir2, dir3);
     }
 };

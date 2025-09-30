@@ -20,6 +20,7 @@
 #include "chrono/core/ChMatrix.h"
 #include "chrono/core/ChVector3.h"
 #include "chrono/core/ChQuaternion.h"
+#include "chrono/core/ChTypes.h"
 
 namespace chrono {
 
@@ -38,21 +39,21 @@ class ChMatrix33 : public Eigen::Matrix<Real, 3, 3, Eigen::RowMajor> {
     ChMatrix33(const Eigen::MatrixBase<OtherDerived>& other) : Eigen::Matrix<Real, 3, 3, Eigen::RowMajor>(other) {}
 
     /// Construct a diagonal matrix with the specified value on the diagonal.
-    ChMatrix33(Real val);
+    explicit ChMatrix33(const Real& val);
 
     /// Construct a diagonal matrix with the specified values on the diagonal.
-    ChMatrix33(const ChVector3<Real>& v);
+    explicit ChMatrix33(const ChVector3<Real>& v);
 
     /// Construct a symmetric 3x3 matrix with the specified vectors for the diagonal and off-digonal elements.
     /// The off-diagonal vector is assumed to contain the elements A(0,1), A(0,2), A(1,2) in this order.
     ChMatrix33(const ChVector3d& diag, const ChVector3d& off_diag);
 
     /// Construct a 3x3 rotation matrix from the given quaternion.
-    ChMatrix33(const ChQuaternion<Real>& q);
+    explicit ChMatrix33(const ChQuaternion<Real>& q);
 
     /// Construct a 3x3 rotation matrix from an angle and a rotation axis.
     /// Note that the axis direction must be normalized.
-    ChMatrix33(Real angle, const ChVector3d& axis);
+    ChMatrix33(const Real& angle, const ChVector3d& axis);
 
     /// Construct a 3x3 matrix with the given vectors as columns.
     /// If the three vectors are mutually orthogonal unit vectors, the resulting matrix is a rotation matrix.
@@ -71,82 +72,82 @@ class ChMatrix33 : public Eigen::Matrix<Real, 3, 3, Eigen::RowMajor> {
 #endif
 
     /// Multiply this matrix by a 3d vector.
-    ChVector3<Real> operator*(const ChVector3<Real>& v) const;
+    CH_NODISCARD ChVector3<Real> operator*(const ChVector3<Real>& v) const;
 
     /// Fill this 3x3 matrix as a rotation matrix, given a unit quaternion.
-    void SetFromQuaternion(const ChQuaternion<Real>& q);
+    inline void SetFromQuaternion(const ChQuaternion<Real>& q);
 
     /// Fill this 3x3 matrix as a rotation matrix, given three Euler angles.
-    void SetFromEulerAnglesZXZ(const ChVector3<Real>& angles);
+    inline void SetFromEulerAnglesZXZ(const ChVector3<Real>& angles);
 
     /// Fill this 3x3 matrix as a rotation matrix, given three Cardano angles.
-    void SetFromCardanAnglesZXY(const ChVector3<Real>& angles);
+    inline void SetFromCardanAnglesZXY(const ChVector3<Real>& angles);
 
     /// Fill this 3x3 matrix as a rotation matrix, given three head, pitch, banking angles.
-    void SetFromCardanAnglesZYX(const ChVector3<Real>& angles);
+    inline void SetFromCardanAnglesZYX(const ChVector3<Real>& angles);
 
     /// Fill this 3x3 matrix as a rotation matrix, given three angles of consecutive rotations about x,y,z axis.
-    void SetFromCardanAnglesXYZ(const ChVector3<Real>& angles);
+    inline void SetFromCardanAnglesXYZ(const ChVector3<Real>& angles);
 
     /// Fill this 3x3 matrix as a rotation matrix, given three Rodrigues parameters.
-    void SetFromRodriguesParameters(const ChVector3<Real>& r);
+    inline void SetFromRodriguesParameters(const ChVector3<Real>& r);
 
     /// Fill this 3x3 matrix as a rotation matrix, given the three versors X,Y,Z of the basis.
-    void SetFromDirectionAxes(const ChVector3<Real>& X, const ChVector3<Real>& Y, const ChVector3<Real>& Z);
+    inline void SetFromDirectionAxes(const ChVector3<Real>& X, const ChVector3<Real>& Y, const ChVector3<Real>& Z);
 
     /// Fill this 3x3 matrix as a rotation matrix with the X axis along the provided direction.
     /// Uses the Gram-Schmidt orthonormalization. The optional argument \a y_sugg, together with \a x_dir, suggests the
     /// XY plane (as long as \a y_sugg is not too close \a y_sugg, in which case a different direction is selected).
-    void SetFromAxisX(const ChVector3<Real>& x_dir,                             ///< X axis
+    inline void SetFromAxisX(const ChVector3<Real>& x_dir,                             ///< X axis
                       const ChVector3<Real>& y_sugg = ChVector3<Real>(0, 1, 0)  ///< suggested Y axis
     );
 
     /// Fill this 3x3 matrix as a rotation matrix with the Y axis along the provided direction.
     /// Uses the Gram-Schmidt orthonormalization. The optional argument \a z_sugg, together with \a y_dir, suggests the
     /// YZ plane (as long as \a y_dir is not too close to \a z_sugg, in which case a different direction is selected).
-    void SetFromAxisY(const ChVector3<Real>& y_dir,                             ///< Y axis
+    inline void SetFromAxisY(const ChVector3<Real>& y_dir,                             ///< Y axis
                       const ChVector3<Real>& z_sugg = ChVector3<Real>(0, 0, 1)  ///< suggested Z axis
     );
 
     /// Fill this 3x3 matrix as a rotation matrix with the Z axis along the provided direction.
     /// Uses the Gram-Schmidt orthonormalization. The optional argument \a x_sugg, together with \a z_dir, suggests the
     /// ZX plane (as long as \a z_dir is not too close to \a x_sugg, in which case a different direction is selected).
-    void SetFromAxisZ(const ChVector3<Real>& z_dir,                             ///< Z axis
+    inline void SetFromAxisZ(const ChVector3<Real>& z_dir,                             ///< Z axis
                       const ChVector3<Real>& x_sugg = ChVector3<Real>(1, 0, 0)  ///< suggested X axis
     );
 
     /// Return the unit vector along the X axis.
-    ChVector3<Real> GetAxisX() const;
+    CH_NODISCARD inline ChVector3<Real> GetAxisX() const;
 
     /// Return the unit vector along the Y axis.
-    ChVector3<Real> GetAxisY() const;
+    CH_NODISCARD inline ChVector3<Real> GetAxisY() const;
 
     /// Return the unit vector along the Z axis.
-    ChVector3<Real> GetAxisZ() const;
+    CH_NODISCARD inline ChVector3<Real> GetAxisZ() const;
 
     /// Return the corresponding unit quaternion.
     /// Assumes that this is a rotation matrix.
-    ChQuaternion<Real> GetQuaternion() const;
+    CH_NODISCARD inline ChQuaternion<Real> GetQuaternion() const;
 
     /// Return the Euler angles.
     /// Assumes that this is a rotation matrix.
-    ChVector3<Real> GetEulerAnglesZXZ() const;
+    CH_NODISCARD inline ChVector3<Real> GetEulerAnglesZXZ() const;
 
     /// Return the Cardano angles.
     /// Assumes that this is a rotation matrix.
-    ChVector3<Real> GetCardanAnglesZXY() const;
+    CH_NODISCARD inline ChVector3<Real> GetCardanAnglesZXY() const;
 
     /// Return the head-pitch-banking angles.
     /// Assumes that this is a rotation matrix.
-    ChVector3<Real> GetCardanAnglesZYX() const;
+    CH_NODISCARD inline ChVector3<Real> GetCardanAnglesZYX() const;
 
     /// Return the angles for consecutive rotations on x,y,z axes.
     /// Assumes that this is a rotation matrix.
-    ChVector3<Real> GetCardanAnglesXYZ() const;
+    CH_NODISCARD inline ChVector3<Real> GetCardanAnglesXYZ() const;
 
     /// Return the Rodrigues parameters.
     /// Assumes that this is a rotation matrix.
-    ChVector3<Real> GetRodriguesParameters() const;
+    CH_NODISCARD inline ChVector3<Real> GetRodriguesParameters() const;
 
     /// Compute eigenvectors and eigenvalues.
     /// Note: only for self-adjoint matrices (e.g. inertia tensors).
@@ -163,7 +164,7 @@ using ChMatrix33f = ChMatrix33<float>;
 
 /// Multiply a transposed 3x3 matrix with a vector.
 template <typename Real>
-ChVector3<Real> operator*(const Eigen::Transpose<Eigen::Matrix<Real, 3, 3, Eigen::RowMajor>>& A,
+CH_NODISCARD inline ChVector3<Real> operator*(const Eigen::Transpose<Eigen::Matrix<Real, 3, 3, Eigen::RowMajor>>& A,
                           const ChVector3<Real>& v) {
     return ChVector3<Real>(A(0, 0) * v.x() + A(0, 1) * v.y() + A(0, 2) * v.z(),
                            A(1, 0) * v.x() + A(1, 1) * v.y() + A(1, 2) * v.z(),
@@ -172,7 +173,7 @@ ChVector3<Real> operator*(const Eigen::Transpose<Eigen::Matrix<Real, 3, 3, Eigen
 
 /// Multiply a transposed const 3x3 matrix with a vector.
 template <typename Real>
-ChVector3<Real> operator*(const Eigen::Transpose<const Eigen::Matrix<Real, 3, 3, Eigen::RowMajor>>& A,
+CH_NODISCARD inline ChVector3<Real> operator*(const Eigen::Transpose<const Eigen::Matrix<Real, 3, 3, Eigen::RowMajor>>& A,
                           const ChVector3<Real>& v) {
     return ChVector3<Real>(A(0, 0) * v.x() + A(0, 1) * v.y() + A(0, 2) * v.z(),
                            A(1, 0) * v.x() + A(1, 1) * v.y() + A(1, 2) * v.z(),
@@ -181,7 +182,7 @@ ChVector3<Real> operator*(const Eigen::Transpose<const Eigen::Matrix<Real, 3, 3,
 
 /// Return the outer product (a 3x3 matrix) of two vectors.
 template <class Real>
-ChMatrix33<Real> TensorProduct(const ChVector3<Real>& vA, const ChVector3<Real>& vB) {
+CH_NODISCARD inline ChMatrix33<Real> TensorProduct(const ChVector3<Real>& vA, const ChVector3<Real>& vB) {
     ChMatrix33<Real> T;
     T(0, 0) = vA.x() * vB.x();
     T(0, 1) = vA.x() * vB.y();
@@ -205,7 +206,7 @@ ChMatrix33<Real>::ChMatrix33(const ChQuaternion<Real>& q) {
 }
 
 template <typename Real>
-ChMatrix33<Real>::ChMatrix33(Real val) {
+ChMatrix33<Real>::ChMatrix33(const Real& val) {
     this->setZero();
     this->diagonal().setConstant(val);
 }
@@ -231,7 +232,7 @@ ChMatrix33<Real>::ChMatrix33(const ChVector3d& diag, const ChVector3d& off_diag)
 }
 
 template <typename Real>
-ChMatrix33<Real>::ChMatrix33(Real angle, const ChVector3d& axis) {
+ChMatrix33<Real>::ChMatrix33(const Real& angle, const ChVector3d& axis) {
     ChQuaternion<Real> q;
     q.SetFromAngleAxis(angle, axis);
     this->SetFromQuaternion(q);
@@ -243,7 +244,7 @@ ChMatrix33<Real>::ChMatrix33(const ChVector3d& X, const ChVector3d& Y, const ChV
 }
 
 template <typename Real>
-ChVector3<Real> ChMatrix33<Real>::operator*(const ChVector3<Real>& v) const {
+CH_NODISCARD ChVector3<Real> ChMatrix33<Real>::operator*(const ChVector3<Real>& v) const {
     return ChVector3<Real>((*this)(0, 0) * v.x() + (*this)(0, 1) * v.y() + (*this)(0, 2) * v.z(),
                            (*this)(1, 0) * v.x() + (*this)(1, 1) * v.y() + (*this)(1, 2) * v.z(),
                            (*this)(2, 0) * v.x() + (*this)(2, 1) * v.y() + (*this)(2, 2) * v.z());
@@ -251,16 +252,16 @@ ChVector3<Real> ChMatrix33<Real>::operator*(const ChVector3<Real>& v) const {
 
 template <typename Real>
 inline void ChMatrix33<Real>::SetFromQuaternion(const ChQuaternion<Real>& q) {
-    Real e0e0 = q.e0() * q.e0();
-    Real e1e1 = q.e1() * q.e1();
-    Real e2e2 = q.e2() * q.e2();
-    Real e3e3 = q.e3() * q.e3();
-    Real e0e1 = q.e0() * q.e1();
-    Real e0e2 = q.e0() * q.e2();
-    Real e0e3 = q.e0() * q.e3();
-    Real e1e2 = q.e1() * q.e2();
-    Real e1e3 = q.e1() * q.e3();
-    Real e2e3 = q.e2() * q.e3();
+    const Real e0e0 = q.e0() * q.e0();
+    const Real e1e1 = q.e1() * q.e1();
+    const Real e2e2 = q.e2() * q.e2();
+    const Real e3e3 = q.e3() * q.e3();
+    const Real e0e1 = q.e0() * q.e1();
+    const Real e0e2 = q.e0() * q.e2();
+    const Real e0e3 = q.e0() * q.e3();
+    const Real e1e2 = q.e1() * q.e2();
+    const Real e1e3 = q.e1() * q.e3();
+    const Real e2e3 = q.e2() * q.e3();
 
     (*this)(0, 0) = (e0e0 + e1e1) * 2 - 1;
     (*this)(0, 1) = (e1e2 - e0e3) * 2;
@@ -275,12 +276,12 @@ inline void ChMatrix33<Real>::SetFromQuaternion(const ChQuaternion<Real>& q) {
 
 template <typename Real>
 inline void ChMatrix33<Real>::SetFromEulerAnglesZXZ(const ChVector3<Real>& angles) {
-    Real cx = std::cos(angles.x());
-    Real cy = std::cos(angles.y());
-    Real cz = std::cos(angles.z());
-    Real sx = std::sin(angles.x());
-    Real sy = std::sin(angles.y());
-    Real sz = std::sin(angles.z());
+    const Real cx = std::cos(angles.x());
+    const Real cy = std::cos(angles.y());
+    const Real cz = std::cos(angles.z());
+    const Real sx = std::sin(angles.x());
+    const Real sy = std::sin(angles.y());
+    const Real sz = std::sin(angles.z());
 
     (*this)(0, 0) = (cz * cx) - (cy * sx * sz);
     (*this)(0, 1) = -(sz * cx) - (cy * sx * cz);
@@ -295,12 +296,12 @@ inline void ChMatrix33<Real>::SetFromEulerAnglesZXZ(const ChVector3<Real>& angle
 
 template <typename Real>
 inline void ChMatrix33<Real>::SetFromCardanAnglesZXY(const ChVector3<Real>& angles) {
-    Real cx = std::cos(angles.x());
-    Real cy = std::cos(angles.y());
-    Real cz = std::cos(angles.z());
-    Real sx = std::sin(angles.x());
-    Real sy = std::sin(angles.y());
-    Real sz = std::sin(angles.z());
+    const Real cx = std::cos(angles.x());
+    const Real cy = std::cos(angles.y());
+    const Real cz = std::cos(angles.z());
+    const Real sx = std::sin(angles.x());
+    const Real sy = std::sin(angles.y());
+    const Real sz = std::sin(angles.z());
 
     (*this)(0, 0) = (cx * cz) - (sz * sx * sy);
     (*this)(0, 1) = -sx * cy;
@@ -315,12 +316,12 @@ inline void ChMatrix33<Real>::SetFromCardanAnglesZXY(const ChVector3<Real>& angl
 
 template <typename Real>
 inline void ChMatrix33<Real>::SetFromCardanAnglesZYX(const ChVector3<Real>& angles) {
-    Real cx = std::cos(angles.y());
-    Real cy = std::cos(angles.x());
-    Real cz = std::cos(angles.z());
-    Real sx = std::sin(angles.y());
-    Real sy = std::sin(angles.x());
-    Real sz = std::sin(angles.z());
+    const Real cx = std::cos(angles.y());
+    const Real cy = std::cos(angles.x());
+    const Real cz = std::cos(angles.z());
+    const Real sx = std::sin(angles.y());
+    const Real sy = std::sin(angles.x());
+    const Real sz = std::sin(angles.z());
 
     (*this)(0, 0) = (cz * cy) - (sz * sx * sy);
     (*this)(0, 1) = -(sz * cy) - (cz * sx * sy);
@@ -335,12 +336,12 @@ inline void ChMatrix33<Real>::SetFromCardanAnglesZYX(const ChVector3<Real>& angl
 
 template <typename Real>
 inline void ChMatrix33<Real>::SetFromCardanAnglesXYZ(const ChVector3<Real>& angles) {
-    Real cx = std::cos(angles.x());
-    Real cy = std::cos(angles.y());
-    Real cz = std::cos(angles.z());
-    Real sx = std::sin(angles.x());
-    Real sy = std::sin(angles.y());
-    Real sz = std::sin(angles.z());
+    const Real cx = std::cos(angles.x());
+    const Real cy = std::cos(angles.y());
+    const Real cz = std::cos(angles.z());
+    const Real sx = std::sin(angles.x());
+    const Real sy = std::sin(angles.y());
+    const Real sz = std::sin(angles.z());
 
     (*this)(0, 0) = cy * cz;
     (*this)(0, 1) = cy * sz;
@@ -355,7 +356,7 @@ inline void ChMatrix33<Real>::SetFromCardanAnglesXYZ(const ChVector3<Real>& angl
 
 template <typename Real>
 inline void ChMatrix33<Real>::SetFromRodriguesParameters(const ChVector3<Real>& r) {
-    Real gam = std::pow(r.x(), 2) + std::pow(r.y(), 2) + std::pow(r.z(), 2);
+    const Real gam = std::pow(r.x(), 2) + std::pow(r.y(), 2) + std::pow(r.z(), 2);
 
     (*this)(0, 0) = 1 + std::pow(r.x(), 2) - std::pow(r.y(), 2) - std::pow(r.z(), 2);
     (*this)(0, 1) = 2 * (r.x() * r.y() - r.z());
@@ -413,7 +414,7 @@ inline void ChMatrix33<Real>::SetFromAxisZ(const ChVector3<Real>& z_dir, const C
 }
 
 template <typename Real>
-inline ChVector3<Real> ChMatrix33<Real>::GetEulerAnglesZXZ() const {
+CH_NODISCARD inline ChVector3<Real> ChMatrix33<Real>::GetEulerAnglesZXZ() const {
     ChVector3<Real> eul;
 
     eul.y() = std::acos((*this)(2, 2));                       // rho, nutation
@@ -429,7 +430,7 @@ inline ChVector3<Real> ChMatrix33<Real>::GetEulerAnglesZXZ() const {
 }
 
 template <typename Real>
-inline ChVector3<Real> ChMatrix33<Real>::GetCardanAnglesZXY() const {
+CH_NODISCARD inline ChVector3<Real> ChMatrix33<Real>::GetCardanAnglesZXY() const {
     ChVector3<Real> car;
 
     Real mel21 = (*this)(2, 1);
@@ -458,7 +459,7 @@ inline ChVector3<Real> ChMatrix33<Real>::GetCardanAnglesZXY() const {
 }
 
 template <typename Real>
-inline ChVector3<Real> ChMatrix33<Real>::GetCardanAnglesZYX() const {
+CH_NODISCARD inline ChVector3<Real> ChMatrix33<Real>::GetCardanAnglesZYX() const {
     ChVector3<Real> Hpb;
 
     Real arg1 = -(*this)(1, 2);
@@ -487,7 +488,7 @@ inline ChVector3<Real> ChMatrix33<Real>::GetCardanAnglesZYX() const {
 }
 
 template <typename Real>
-inline ChVector3<Real> ChMatrix33<Real>::GetCardanAnglesXYZ() const {
+CH_NODISCARD inline ChVector3<Real> ChMatrix33<Real>::GetCardanAnglesXYZ() const {
     ChVector3<Real> Rxyz;
 
     Real arg1 = -(*this)(0, 2);
@@ -516,9 +517,9 @@ inline ChVector3<Real> ChMatrix33<Real>::GetCardanAnglesXYZ() const {
 }
 
 template <typename Real>
-inline ChVector3<Real> ChMatrix33<Real>::GetRodriguesParameters() const {
+CH_NODISCARD inline ChVector3<Real> ChMatrix33<Real>::GetRodriguesParameters() const {
     ChVector3<Real> r;
-    ChQuaternion<Real> q = GetQuaternion();
+    const ChQuaternion<Real> q = GetQuaternion();
     // warning: infinite results may happen..
     r.x() = q.e1() / q.e0();
     r.y() = q.e2() / q.e0();
@@ -528,22 +529,22 @@ inline ChVector3<Real> ChMatrix33<Real>::GetRodriguesParameters() const {
 }
 
 template <typename Real>
-inline ChQuaternion<Real> ChMatrix33<Real>::GetQuaternion() const {
+CH_NODISCARD inline ChQuaternion<Real> ChMatrix33<Real>::GetQuaternion() const {
     ChQuaternion<Real> q;
-    Real s, tr;
-    Real half = (Real)0.5;
+    Real s = 0.0;
+    const Real half = static_cast<Real>(0.5);
 
-    Real m00 = (*this)(0, 0);
-    Real m01 = (*this)(0, 1);
-    Real m02 = (*this)(0, 2);
-    Real m10 = (*this)(1, 0);
-    Real m11 = (*this)(1, 1);
-    Real m12 = (*this)(1, 2);
-    Real m20 = (*this)(2, 0);
-    Real m21 = (*this)(2, 1);
-    Real m22 = (*this)(2, 2);
+    const Real m00 = (*this)(0, 0);
+    const Real m01 = (*this)(0, 1);
+    const Real m02 = (*this)(0, 2);
+    const Real m10 = (*this)(1, 0);
+    const Real m11 = (*this)(1, 1);
+    const Real m12 = (*this)(1, 2);
+    const Real m20 = (*this)(2, 0);
+    const Real m21 = (*this)(2, 1);
+    const Real m22 = (*this)(2, 2);
 
-    tr = m00 + m11 + m22;  // diag sum
+    const Real tr = m00 + m11 + m22;  // diag sum
 
     if (tr >= 0) {
         s = std::sqrt(tr + 1);
@@ -596,7 +597,7 @@ inline ChQuaternion<Real> ChMatrix33<Real>::GetQuaternion() const {
 }
 
 template <typename Real>
-inline ChVector3<Real> ChMatrix33<Real>::GetAxisX() const {
+CH_NODISCARD inline ChVector3<Real> ChMatrix33<Real>::GetAxisX() const {
     ChVector3<Real> X;
     X.x() = (*this)(0, 0);
     X.y() = (*this)(1, 0);
@@ -605,7 +606,7 @@ inline ChVector3<Real> ChMatrix33<Real>::GetAxisX() const {
 }
 
 template <typename Real>
-inline ChVector3<Real> ChMatrix33<Real>::GetAxisY() const {
+CH_NODISCARD inline ChVector3<Real> ChMatrix33<Real>::GetAxisY() const {
     ChVector3<Real> Y;
     Y.x() = (*this)(0, 1);
     Y.y() = (*this)(1, 1);
@@ -614,7 +615,7 @@ inline ChVector3<Real> ChMatrix33<Real>::GetAxisY() const {
 }
 
 template <typename Real>
-inline ChVector3<Real> ChMatrix33<Real>::GetAxisZ() const {
+CH_NODISCARD inline ChVector3<Real> ChMatrix33<Real>::GetAxisZ() const {
     ChVector3<Real> Z;
     Z.x() = (*this)(0, 2);
     Z.y() = (*this)(1, 2);

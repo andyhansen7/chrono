@@ -203,19 +203,19 @@ using ChSparseMatrix = Eigen::SparseMatrix<double, Eigen::RowMajor, int>;
 /// \param[in] start_col The column index where the first element will be copied
 /// \param[in] overwrite Indicate if the copied elements will overwrite existing elements or be summed to them
 inline void PasteMatrix(ChSparseMatrix& matrTo,
-                        ChMatrixConstRef matrFrom,
-                        int start_row,
-                        int start_col,
-                        bool overwrite = true) {
+                        const ChMatrixConstRef matrFrom,
+                        const int start_row,
+                        const int start_col,
+                        const bool overwrite = true) {
     if (overwrite) {
-        for (auto i = 0; i < matrFrom.rows(); i++) {
-            for (auto j = 0; j < matrFrom.cols(); j++) {
+        for (auto i = 0; i < matrFrom.rows(); ++i) {
+            for (auto j = 0; j < matrFrom.cols(); ++j) {
                 matrTo.SetElement(start_row + i, start_col + j, matrFrom(i, j), true);
             }
         }
     } else {
-        for (auto i = 0; i < matrFrom.rows(); i++) {
-            for (auto j = 0; j < matrFrom.cols(); j++) {
+        for (auto i = 0; i < matrFrom.rows(); ++i) {
+            for (auto j = 0; j < matrFrom.cols(); ++j) {
                 matrTo.SetElement(start_row + i, start_col + j, matrFrom(i, j), false);
             }
         }
@@ -228,7 +228,7 @@ inline void PasteMatrix(ChSparseMatrix& matrTo,
 /// Return a new vector which only contains the elements with specified indices.
 #ifndef SWIG
 template <typename T = double>
-ChVectorDynamic<T> SliceVector(ChVectorConstRef v, ChArrayConstRef<int> indices) {
+CH_NODISCARD constexpr inline ChVectorDynamic<T> SliceVector(const ChVectorConstRef v, const ChArrayConstRef<int> indices) {
 #if EIGEN_VERSION_AT_LEAST(3, 4, 0)
     return v(indices);
 #else
@@ -240,9 +240,9 @@ ChVectorDynamic<T> SliceVector(ChVectorConstRef v, ChArrayConstRef<int> indices)
 // -----------------------------------------------------------------------------
 
 /// Serialization of a dense matrix or vector into an ASCII stream (e.g. a file).
-inline void StreamOut(ChMatrixConstRef A, std::ostream& stream) {
-    for (int ii = 0; ii < A.rows(); ii++) {
-        for (int jj = 0; jj < A.cols(); jj++) {
+inline void StreamOut(const ChMatrixConstRef A, std::ostream& stream) {
+    for (int ii = 0; ii < A.rows(); ++ii) {
+        for (int jj = 0; jj < A.cols(); ++jj) {
             stream << A(ii, jj);
             if (jj < A.cols() - 1)
                 stream << " ";
@@ -253,8 +253,8 @@ inline void StreamOut(ChMatrixConstRef A, std::ostream& stream) {
 
 /// Serialization of a sparse matrix to an ASCII stream (e.g., a file) in COO sparse matrix format.
 /// By default, uses 0-based indices. If one_indexed=true, row and column indices start at 1 (as in Matlab).
-inline void StreamOut(ChSparseMatrix& mat, std::ostream& stream, bool one_indexed = false) {
-    int offset = one_indexed ? 1 : 0;
+inline void StreamOut(const ChSparseMatrix& mat, std::ostream& stream, const bool one_indexed = false) {
+    const int offset = one_indexed ? 1 : 0;
 
     bool last_row_visited = false;
     bool last_col_visited = false;

@@ -52,7 +52,7 @@ namespace chrono {
 
 /// Clamp and modify the specified value to lie within the given limits.
 template <typename T>
-void ChClampValue(T& value, T limitMin, T limitMax) {
+static constexpr inline void ChClampValue(T& value, const T& limitMin, const T& limitMax) {
     if (value < limitMin)
         value = limitMin;
     else if (value > limitMax)
@@ -61,7 +61,7 @@ void ChClampValue(T& value, T limitMin, T limitMax) {
 
 /// Clamp the specified value to lie within the given limits.
 template <typename T>
-T ChClamp(T value, T limitMin, T limitMax) {
+CH_NODISCARD static constexpr inline T ChClamp(const T& value, const T& limitMin, const T& limitMax) {
     if (value < limitMin)
         return limitMin;
     if (value > limitMax)
@@ -72,7 +72,7 @@ T ChClamp(T value, T limitMin, T limitMax) {
 
 /// Signum function.
 template <typename T>
-int ChSignum(T x) {
+CH_NODISCARD static constexpr inline int ChSignum(const T& x) {
     return (x > T(0)) - (x < T(0));
 }
 
@@ -80,7 +80,7 @@ int ChSignum(T x) {
 /// If symmetric, wrap in [-PI; PI).
 /// If not symmetric, wrap in [0; 2PI).
 template <typename T>
-T ChWrapAngle(T angle, bool symmetric = true) {
+CH_NODISCARD static constexpr inline T ChWrapAngle(const T& angle, const bool& symmetric = true) {
     T wangle = angle;
     if (symmetric) {  // [-PI; +PI)
         wangle = std::fmod(wangle + CH_PI, CH_2PI);

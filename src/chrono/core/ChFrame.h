@@ -41,32 +41,32 @@ template <class Real = double>
 class ChFrame {
   public:
     /// Default constructor (identity frame).
-    ChFrame() : m_csys(ChVector3<Real>(0, 0, 0), ChQuaternion<Real>(1, 0, 0, 0)), m_rmat(1.0) {}
+    constexpr inline ChFrame() : m_csys(ChVector3<Real>(0, 0, 0), ChQuaternion<Real>(1, 0, 0, 0)), m_rmat(1.0) {}
 
     /// Construct from position and rotation (as quaternion).
-    ChFrame(const ChVector3<Real>& v, const ChQuaternion<Real>& q = ChQuaternion<Real>(1, 0, 0, 0))
+    constexpr inline ChFrame(const ChVector3<Real>& v, const ChQuaternion<Real>& q = ChQuaternion<Real>(1, 0, 0, 0))
         : m_csys(v, q), m_rmat(q) {}
 
     /// Construct from pos and rotation (as a 3x3 matrix).
-    ChFrame(const ChVector3<Real>& v, const ChMatrix33<Real>& R) : m_csys(v, R.GetQuaternion()), m_rmat(R) {}
+    constexpr inline ChFrame(const ChVector3<Real>& v, const ChMatrix33<Real>& R) : m_csys(v, R.GetQuaternion()), m_rmat(R) {}
 
     /// Construct from position mv and rotation of angle alpha around unit vector mu.
-    ChFrame(const ChVector3<Real>& v, const Real angle, const ChVector3<Real>& u) : m_csys(v, angle, u) {
+    constexpr inline ChFrame(const ChVector3<Real>& v, const Real angle, const ChVector3<Real>& u) : m_csys(v, angle, u) {
         m_rmat.SetFromQuaternion(m_csys.rot);
     }
 
     /// Construct from a coordsys.
-    explicit ChFrame(const ChCoordsys<Real>& C) : m_csys(C), m_rmat(C.rot) {}
+    constexpr inline explicit ChFrame(const ChCoordsys<Real>& C) : m_csys(C), m_rmat(C.rot) {}
 
     /// Copy constructor, build from another frame.
-    ChFrame(const ChFrame<Real>& other) : m_csys(other.m_csys), m_rmat(other.m_rmat) {}
+    constexpr inline ChFrame(const ChFrame<Real>& other) : m_csys(other.m_csys), m_rmat(other.m_rmat) {}
 
     virtual ~ChFrame() {}
 
     // OPERATORS OVERLOADING
 
     /// Assignment operator: copy from another frame.
-    ChFrame<Real>& operator=(const ChFrame<Real>& other) {
+    CH_NODISCARD constexpr inline ChFrame<Real>& operator=(const ChFrame<Real>& other) {
         if (&other == this)
             return *this;
         m_csys = other.m_csys;
@@ -75,10 +75,10 @@ class ChFrame {
     }
 
     /// Returns true for identical frames.
-    bool operator==(const ChFrame<Real>& other) const { return Equals(other); }
+    CH_NODISCARD constexpr inline bool operator==(const ChFrame<Real>& other) const { return Equals(other); }
 
     /// Returns true for different frames.
-    bool operator!=(const ChFrame<Real>& other) const { return !Equals(other); }
+    CH_NODISCARD constexpr inline bool operator!=(const ChFrame<Real>& other) const { return !Equals(other); }
 
     /// Transform another frame through this frame.
     /// If A is this frame and F another frame expressed in A, then G = A * F is the frame F expresssed in the parent
@@ -86,7 +86,7 @@ class ChFrame {
     ///   G = F_1to0 * F_2to1 * F_3to2 * F;
     /// i.e., just like done with a sequence of Denavitt-Hartemberg matrix multiplications.
     /// This operation is not commutative.
-    ChFrame<Real> operator*(const ChFrame<Real>& F) const { return this->TransformLocalToParent(F); }
+    CH_NODISCARD constexpr inline ChFrame<Real> operator*(const ChFrame<Real>& F) const { return this->TransformLocalToParent(F); }
 
     /// Transform  another frame through this frame.
     /// If A is this frame and F another frame expressed in A, then G = F >> A is the frame F expresssed in the parent
@@ -94,7 +94,7 @@ class ChFrame {
     ///   G = F >> F_3to2 >> F_2to1 >> F_1to0;
     /// i.e., just like done with a sequence of Denavitt-Hartemberg matrix multiplications (but reverting order).
     /// This operation is not commutative.
-    ChFrame<Real> operator>>(const ChFrame<Real>& F) const { return F.TransformLocalToParent(*this); }
+    CH_NODISCARD constexpr inline ChFrame<Real> operator>>(const ChFrame<Real>& F) const { return F.TransformLocalToParent(*this); }
 
     /// Transform a vector through this frame (express in parent frame).
     /// If A is this frame and v a vector expressed in this frame, w = A * v is the vector expressed in the parent
@@ -106,23 +106,23 @@ class ChFrame {
     ///   w = v >> C >> B >> A
     /// may be faster than
     ///   w = A * B * C * v
-    ChVector3<Real> operator*(const ChVector3<Real>& v) const { return TransformPointLocalToParent(v); }
+    CH_NODISCARD constexpr inline ChVector3<Real> operator*(const ChVector3<Real>& v) const { return TransformPointLocalToParent(v); }
 
     /// Transform a vector through this frame (express from parent frame).
     /// If A is this frame and v a vector expressed in the parent frame of A, then w = A / v is the vector expressed in
     /// A. In other words, w = A * v  implies v = A/w.
-    ChVector3<Real> operator/(const ChVector3<Real>& v) const { return TransformPointParentToLocal(v); }
+    CH_NODISCARD constexpr inline ChVector3<Real> operator/(const ChVector3<Real>& v) const { return TransformPointParentToLocal(v); }
 
     /// Transform this frame by pre-multiplication with another frame.
     /// If A is this frame, then A >>= F means A' = F * A or A' = A >> F.
-    ChFrame<Real>& operator>>=(const ChFrame<Real>& F) {
+    constexpr inline ChFrame<Real>& operator>>=(const ChFrame<Real>& F) {
         ConcatenatePreTransformation(F);
         return *this;
     }
 
     /// Transform this frame by post-multiplication with another frame.
     /// If A is this frame, then A *= F means A' = A * F or A' = F >> A.
-    ChFrame<Real>& operator*=(const ChFrame<Real>& F) {
+    constexpr inline ChFrame<Real>& operator*=(const ChFrame<Real>& F) {
         ConcatenatePostTransformation(F);
         return *this;
     }
@@ -130,37 +130,37 @@ class ChFrame {
     // Mixed type operators
 
     /// Transform this frame by pre-multiplication with a given vector (translate frame).
-    ChFrame<Real>& operator>>=(const ChVector3<Real>& v) {
+    constexpr inline ChFrame<Real>& operator>>=(const ChVector3<Real>& v) {
         this->m_csys.pos += v;
         return *this;
     }
 
     /// Transform this frame by pre-multiplication with a given quaternion (rotate frame).
-    ChFrame<Real>& operator>>=(const ChQuaternion<Real>& q) {
+    constexpr inline ChFrame<Real>& operator>>=(const ChQuaternion<Real>& q) {
         this->SetCoordsys(q.Rotate(this->m_csys.pos), this->m_csys.rot >> q);
         return *this;
     }
 
     /// Transform this frame by pre-multiplication with a given coordinate system.
-    ChFrame<Real>& operator>>=(const ChCoordsys<Real>& C) {
+    constexpr inline ChFrame<Real>& operator>>=(const ChCoordsys<Real>& C) {
         this->SetCoordsys(this->m_csys >> C);
         return *this;
     }
 
     /// Return both current rotation and translation as a ChCoordsys object.
-    const ChCoordsys<Real>& GetCoordsys() const { return m_csys; }
+    CH_NODISCARD constexpr inline const ChCoordsys<Real>& GetCoordsys() const { return m_csys; }
 
     /// Return the current translation vector.
-    const ChVector3<Real>& GetPos() const { return m_csys.pos; }
+    CH_NODISCARD constexpr inline const ChVector3<Real>& GetPos() const { return m_csys.pos; }
 
     /// Return the current rotation quaternion.
-    const ChQuaternion<Real>& GetRot() const { return m_csys.rot; }
+    CH_NODISCARD constexpr inline const ChQuaternion<Real>& GetRot() const { return m_csys.rot; }
 
     /// Return the current 3x3 rotation matrix.
-    const ChMatrix33<Real>& GetRotMat() const { return m_rmat; }
+    CH_NODISCARD constexpr inline const ChMatrix33<Real>& GetRotMat() const { return m_rmat; }
 
     /// Get axis of finite rotation, in parent space.
-    ChVector3<Real> GetRotAxis() const {
+    CH_NODISCARD constexpr inline ChVector3<Real> GetRotAxis() const {
         ChVector3<Real> vtmp;
         Real angle;
         m_csys.rot.GetAngleAxis(angle, vtmp);
@@ -168,7 +168,7 @@ class ChFrame {
     }
 
     /// Get angle of rotation about axis of finite rotation.
-    Real GetRotAngle() const {
+    CH_NODISCARD constexpr inline Real GetRotAngle() const {
         ChVector3<Real> vtmp;
         Real angle;
         m_csys.rot.GetAngleAxis(angle, vtmp);
@@ -240,51 +240,51 @@ class ChFrame {
     // FUNCTIONS FOR COORDINATE TRANSFORMATIONS
 
     /// Transform a point from the local frame coordinate system to the parent coordinate system.
-    ChVector3<Real> TransformPointLocalToParent(const ChVector3<Real>& v) const { return m_csys.pos + m_rmat * v; }
+    CH_NODISCARD constexpr inline ChVector3<Real> TransformPointLocalToParent(const ChVector3<Real>& v) const { return m_csys.pos + m_rmat * v; }
 
     /// Transforms a point from the parent coordinate system to local frame coordinate system.
-    ChVector3<Real> TransformPointParentToLocal(const ChVector3<Real>& v) const {
+    CH_NODISCARD constexpr inline ChVector3<Real> TransformPointParentToLocal(const ChVector3<Real>& v) const {
         return m_rmat.transpose() * (v - m_csys.pos);
     }
 
     /// Transform a direction from the parent frame coordinate system to 'this' local coordinate system.
-    ChVector3<Real> TransformDirectionLocalToParent(const ChVector3<Real>& d) const { return m_rmat * d; }
+    CH_NODISCARD constexpr inline ChVector3<Real> TransformDirectionLocalToParent(const ChVector3<Real>& d) const { return m_rmat * d; }
 
     /// Transforms a direction from 'this' local coordinate system to parent frame coordinate system.
-    ChVector3<Real> TransformDirectionParentToLocal(const ChVector3<Real>& d) const { return m_rmat.transpose() * d; }
+    CH_NODISCARD constexpr inline ChVector3<Real> TransformDirectionParentToLocal(const ChVector3<Real>& d) const { return m_rmat.transpose() * d; }
 
     /// Transform a wrench from the local coordinate system to the parent coordinate system.
-    ChWrench<Real> TransformWrenchLocalToParent(const ChWrench<Real>& w) const {
-        auto force_parent = TransformDirectionLocalToParent(w.force);
+    CH_NODISCARD constexpr inline ChWrench<Real> TransformWrenchLocalToParent(const ChWrench<Real>& w) const {
+        const auto force_parent = TransformDirectionLocalToParent(w.force);
         return {force_parent,                                                                   //
                 Vcross(m_csys.pos, force_parent) + TransformDirectionLocalToParent(w.torque)};  //
     }
 
     /// Transform a wrench from the parent coordinate system to the local coordinate system.
-    ChWrench<Real> TransformWrenchParentToLocal(const ChWrench<Real>& w) const {
-        auto force_local = TransformDirectionParentToLocal(w.force);
-        auto pos_local = TransformDirectionParentToLocal(-m_csys.pos);
+    CH_NODISCARD ChWrench<Real> TransformWrenchParentToLocal(const ChWrench<Real>& w) const {
+        const auto force_local = TransformDirectionParentToLocal(w.force);
+        const auto pos_local = TransformDirectionParentToLocal(-m_csys.pos);
         return {force_local,                                                                  //
                 Vcross(pos_local, force_local) + TransformDirectionParentToLocal(w.torque)};  //
     }
 
     /// Transform a frame from 'this' local coordinate system to parent frame coordinate system.
-    ChFrame<Real> TransformLocalToParent(const ChFrame<Real>& F) const {
+    CH_NODISCARD constexpr inline ChFrame<Real> TransformLocalToParent(const ChFrame<Real>& F) const {
         return ChFrame<Real>(TransformPointLocalToParent(F.m_csys.pos), m_csys.rot * F.m_csys.rot);
     }
 
     /// Transform a frame from the parent coordinate system to 'this' local frame coordinate system.
-    ChFrame<Real> TransformParentToLocal(const ChFrame<Real>& F) const {
-        return ChFrame<>(TransformPointParentToLocal(F.m_csys.pos), m_csys.rot.GetConjugate() * F.m_csys.rot);
+    CH_NODISCARD constexpr inline ChFrame<Real> TransformParentToLocal(const ChFrame<Real>& F) const {
+        return ChFrame<Real>(TransformPointParentToLocal(F.m_csys.pos), m_csys.rot.GetConjugate() * F.m_csys.rot);
     }
 
     // OTHER FUNCTIONS
 
     /// Returns true if this transform is identical to the other transform.
-    bool Equals(const ChFrame<Real>& other) const { return m_csys.Equals(other.m_csys); }
+    CH_NODISCARD constexpr inline bool Equals(const ChFrame<Real>& other) const { return m_csys.Equals(other.m_csys); }
 
     /// Returns true if this transform is equal to the other transform, within a tolerance 'tol'.
-    bool Equals(const ChFrame<Real>& other, Real tol) const { return m_csys.Equals(other.m_csys, tol); }
+    CH_NODISCARD constexpr inline bool Equals(const ChFrame<Real>& other, const Real tol) const { return m_csys.Equals(other.m_csys, tol); }
 
     /// Normalize the rotation, so that quaternion has unit length
     void Normalize() {
@@ -307,7 +307,7 @@ class ChFrame {
     }
 
     /// Return the inverse transform.
-    ChFrame<Real> GetInverse() const {
+    CH_NODISCARD constexpr inline ChFrame<Real> GetInverse() const {
         ChFrame<Real> tmp(*this);
         tmp.Invert();
         return tmp;
@@ -377,7 +377,7 @@ typedef ChFrame<float> ChFramef;
 /// Returns a ChCoordsys.
 /// The effect is like applying the transformation frame_A to frame_B and get frame_C.
 template <class Real>
-ChCoordsys<Real> operator*(const ChFrame<Real>& Fa, const ChCoordsys<Real>& Cb) {
+CH_NODISCARD ChCoordsys<Real> operator*(const ChFrame<Real>& Fa, const ChCoordsys<Real>& Cb) {
     return Fa.GetCoordsys().TransformLocalToParent(Cb);
 }
 
@@ -389,8 +389,8 @@ ChCoordsys<Real> operator*(const ChFrame<Real>& Fa, const ChCoordsys<Real>& Cb) 
 /// The effect is like applying the transformation frame_A to frame_B and get frame_C.
 /// Performance warning: this operator promotes frame_A to a temporary ChFrame.
 template <class Real>
-ChFrame<Real> operator*(const ChCoordsys<Real>& Ca, const ChFrame<Real>& Fb) {
-    ChFrame<Real> Fa(Ca);
+CH_NODISCARD ChFrame<Real> operator*(const ChCoordsys<Real>& Ca, const ChFrame<Real>& Fb) {
+    const ChFrame<Real> Fa(Ca);
     return Fa.TransformLocalToParent(Fb);
 }
 
@@ -401,7 +401,7 @@ ChFrame<Real> operator*(const ChCoordsys<Real>& Ca, const ChFrame<Real>& Fb) {
 /// Returns a ChCoordsys.
 /// The effect is like applying the transformation frame_B to frame_A and get frame_C.
 template <class Real>
-ChCoordsys<Real> operator>>(const ChCoordsys<Real>& Ca, const ChFrame<Real>& Fb) {
+CH_NODISCARD ChCoordsys<Real> operator>>(const ChCoordsys<Real>& Ca, const ChFrame<Real>& Fb) {
     return Fb.GetCoordsys().TransformLocalToParent(Ca);
 }
 
@@ -413,8 +413,8 @@ ChCoordsys<Real> operator>>(const ChCoordsys<Real>& Ca, const ChFrame<Real>& Fb)
 /// The effect is like applying the transformation frame_B to frame_A and get frame_C.
 /// Performance warning: this operator promotes frame_B to a temporary ChFrame.
 template <class Real>
-ChFrame<Real> operator>>(const ChFrame<Real>& Fa, const ChCoordsys<Real>& Cb) {
-    ChFrame<Real> Fb(Cb);
+CH_NODISCARD ChFrame<Real> operator>>(const ChFrame<Real>& Fa, const ChCoordsys<Real>& Cb) {
+    const ChFrame<Real> Fb(Cb);
     return Fb.TransformLocalToParent(Fa);
 }
 
@@ -427,7 +427,7 @@ ChFrame<Real> operator>>(const ChFrame<Real>& Fa, const ChCoordsys<Real>& Cb) {
 /// Returns a ChVector.
 /// The effect is like applying the transformation frame_A to vector_B and get vector_C.
 template <class Real>
-ChVector3<Real> operator*(const ChFrame<Real>& Fa, const ChVector3<Real>& vb) {
+CH_NODISCARD ChVector3<Real> operator*(const ChFrame<Real>& Fa, const ChVector3<Real>& vb) {
     return Fa.TransformPointLocalToParent(vb);
 }
 
@@ -438,7 +438,7 @@ ChVector3<Real> operator*(const ChFrame<Real>& Fa, const ChVector3<Real>& vb) {
 /// Returns a ChFrame.
 /// The effect is like applying the translation vector_A to frame_B and get frame_C.
 template <class Real>
-ChFrame<Real> operator*(const ChVector3<Real>& va, const ChFrame<Real>& Fb) {
+CH_NODISCARD ChFrame<Real> operator*(const ChVector3<Real>& va, const ChFrame<Real>& Fb) {
     return ChFrame<Real>(Fb.GetPos() + va, Fb.GetRot());
 }
 
@@ -455,7 +455,7 @@ ChFrame<Real> operator*(const ChVector3<Real>& va, const ChFrame<Real>& Fb) {
 ///  new_v = old_v >> frame3to2 >> frame2to1 >> frame1to0;
 /// This operation is not commutative.
 template <class Real>
-ChVector3<Real> operator>>(const ChVector3<Real>& va, const ChFrame<Real>& Fb) {
+CH_NODISCARD ChVector3<Real> operator>>(const ChVector3<Real>& va, const ChFrame<Real>& Fb) {
     return Fb.TransformPointLocalToParent(va);
 }
 
@@ -466,7 +466,7 @@ ChVector3<Real> operator>>(const ChVector3<Real>& va, const ChFrame<Real>& Fb) {
 /// Returns a ChFrame.
 /// The effect is like applying the translation vector_B to frame_A and get frame_C.
 template <class Real>
-ChFrame<Real> operator>>(const ChFrame<Real>& Fa, const ChVector3<Real>& vb) {
+CH_NODISCARD ChFrame<Real> operator>>(const ChFrame<Real>& Fa, const ChVector3<Real>& vb) {
     return ChFrame<Real>(Fa.GetPos() + vb, Fa.GetRot());
 }
 
@@ -479,7 +479,7 @@ ChFrame<Real> operator>>(const ChFrame<Real>& Fa, const ChVector3<Real>& vb) {
 /// Returns a ChQuaternion.
 /// The effect is like applying the transformation frame_A to quat_B and get quat_C.
 template <class Real>
-ChQuaternion<Real> operator*(const ChFrame<Real>& Fa, const ChQuaternion<Real>& qb) {
+CH_NODISCARD ChQuaternion<Real> operator*(const ChFrame<Real>& Fa, const ChQuaternion<Real>& qb) {
     return Fa.GetRot() * qb;
 }
 
@@ -490,8 +490,8 @@ ChQuaternion<Real> operator*(const ChFrame<Real>& Fa, const ChQuaternion<Real>& 
 /// Returns a ChFrame.
 /// The effect is like applying the rotation quat_A to frame_B and get frame_C.
 template <class Real>
-ChFrame<Real> operator*(const ChQuaternion<Real>& qa, const ChFrame<Real>& Fb) {
-    ChFrame<Real> res(qa.Rotate(Fb.GetPos()), qa * Fb.GetRot());
+CH_NODISCARD ChFrame<Real> operator*(const ChQuaternion<Real>& qa, const ChFrame<Real>& Fb) {
+    const ChFrame<Real> res(qa.Rotate(Fb.GetPos()), qa * Fb.GetRot());
     return res;
 }
 
@@ -502,7 +502,7 @@ ChFrame<Real> operator*(const ChQuaternion<Real>& qa, const ChFrame<Real>& Fb) {
 /// Returns a ChQuaternion.
 /// The effect is like applying the transformation frame_B to quat_A and get quat_C.
 template <class Real>
-ChQuaternion<Real> operator>>(const ChQuaternion<Real>& qa, const ChFrame<Real>& Fb) {
+CH_NODISCARD ChQuaternion<Real> operator>>(const ChQuaternion<Real>& qa, const ChFrame<Real>& Fb) {
     return qa >> Fb.GetRot();
 }
 
@@ -513,8 +513,8 @@ ChQuaternion<Real> operator>>(const ChQuaternion<Real>& qa, const ChFrame<Real>&
 /// Returns a ChFrame.
 /// The effect is like applying the rotation quat_B to frame_A and get frame_C.
 template <class Real>
-ChFrame<Real> operator>>(const ChFrame<Real>& Fa, const ChQuaternion<Real>& qb) {
-    ChFrame<Real> res(qb.Rotate(Fa.GetPos()), Fa.GetRot() >> qb);
+CH_NODISCARD ChFrame<Real> operator>>(const ChFrame<Real>& Fa, const ChQuaternion<Real>& qb) {
+    const ChFrame<Real> res(qb.Rotate(Fa.GetPos()), Fa.GetRot() >> qb);
     return res;
 }
 

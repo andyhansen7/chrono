@@ -17,13 +17,12 @@
 #include "chrono/functions/ChFunctionPositionLine.h"
 #include "chrono/functions/ChFunctionRamp.h"
 #include "chrono/geometry/ChLineSegment.h"
+#include "chrono/core/ChGlobal.h"
 
 namespace chrono {
 
 // Register into the object factory, to enable run-time dynamic creation and persistence
 CH_FACTORY_REGISTER(ChFunctionPositionLine)
-
-static const double FD_STEP = 1e-4;
 
 ChFunctionPositionLine::ChFunctionPositionLine() {
     // default trajectory is a segment

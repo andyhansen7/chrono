@@ -339,19 +339,19 @@ typedef ChWrench<float> ChWrenchf;
 // These functions are here for users who prefer to use global functions instead of ChVector3 member functions.
 
 template <class RealA, class RealB>
-RealA Vdot(const ChVector3<RealA>& va, const ChVector3<RealB>& vb) {
+CH_NODISCARD constexpr inline RealA Vdot(const ChVector3<RealA>& va, const ChVector3<RealB>& vb) {
     return (RealA)((va.x() * vb.x()) + (va.y() * vb.y()) + (va.z() * vb.z()));
 }
 
 template <class RealA>
-void Vset(ChVector3<RealA>& v, const RealA& mx, const RealA& my, const RealA& mz) {
+constexpr inline void Vset(ChVector3<RealA>& v, const RealA& mx, const RealA& my, const RealA& mz) {
     v.x() = mx;
     v.y() = my;
     v.z() = mz;
 }
 
 template <class RealA, class RealB>
-ChVector3<RealA> Vadd(const ChVector3<RealA>& va, const ChVector3<RealB>& vb) {
+CH_NODISCARD constexpr inline ChVector3<RealA> Vadd(const ChVector3<RealA>& va, const ChVector3<RealB>& vb) {
     ChVector3<RealA> result;
     result.x() = va.x() + vb.x();
     result.y() = va.y() + vb.y();
@@ -360,7 +360,7 @@ ChVector3<RealA> Vadd(const ChVector3<RealA>& va, const ChVector3<RealB>& vb) {
 }
 
 template <class RealA, class RealB>
-ChVector3<RealA> Vsub(const ChVector3<RealA>& va, const ChVector3<RealB>& vb) {
+CH_NODISCARD constexpr inline ChVector3<RealA> Vsub(const ChVector3<RealA>& va, const ChVector3<RealB>& vb) {
     ChVector3<RealA> result;
     result.x() = va.x() - vb.x();
     result.y() = va.y() - vb.y();
@@ -369,7 +369,7 @@ ChVector3<RealA> Vsub(const ChVector3<RealA>& va, const ChVector3<RealB>& vb) {
 }
 
 template <class RealA, class RealB>
-ChVector3<RealA> Vcross(const ChVector3<RealA>& va, const ChVector3<RealB>& vb) {
+CH_NODISCARD constexpr inline ChVector3<RealA> Vcross(const ChVector3<RealA>& va, const ChVector3<RealB>& vb) {
     ChVector3<RealA> result;
     result.x() = (va.y() * vb.z()) - (va.z() * vb.y());
     result.y() = (va.z() * vb.x()) - (va.x() * vb.z());
@@ -378,7 +378,7 @@ ChVector3<RealA> Vcross(const ChVector3<RealA>& va, const ChVector3<RealB>& vb) 
 }
 
 template <class RealA, class RealB>
-ChVector3<RealA> Vmul(const ChVector3<RealA>& va, const RealB& fact) {
+CH_NODISCARD constexpr inline ChVector3<RealA> Vmul(const ChVector3<RealA>& va, const RealB& fact) {
     ChVector3<RealA> result;
     result.x() = va.x() * (RealA)fact;
     result.y() = va.y() * (RealA)fact;
@@ -387,29 +387,29 @@ ChVector3<RealA> Vmul(const ChVector3<RealA>& va, const RealB& fact) {
 }
 
 template <class RealA>
-RealA Vlength(const ChVector3<RealA>& va) {
-    return (RealA)va.Length();
+CH_NODISCARD constexpr inline RealA Vlength(const ChVector3<RealA>& va) {
+    return static_cast<RealA>(va.Length());
 }
 
 template <class RealA>
-ChVector3<RealA> Vnorm(const ChVector3<RealA>& va) {
+CH_NODISCARD constexpr inline ChVector3<RealA> Vnorm(const ChVector3<RealA>& va) {
     ChVector3<RealA> result(va);
     result.Normalize();
     return result;
 }
 
 template <class RealA, class RealB>
-bool Vequal(const ChVector3<RealA>& va, const ChVector3<RealB>& vb) {
+CH_NODISCARD constexpr inline bool Vequal(const ChVector3<RealA>& va, const ChVector3<RealB>& vb) {
     return (va == vb);
 }
 
 template <class RealA>
-bool Vnotnull(const ChVector3<RealA>& va) {
+CH_NODISCARD constexpr inline bool Vnotnull(const ChVector3<RealA>& va) {
     return (va.x() != 0 || va.y() != 0 || va.z() != 0);
 }
 
 template <class RealA>
-ChVector3<RealA> Vmin(const ChVector3<RealA>& va, const ChVector3<RealA>& vb) {
+CH_NODISCARD constexpr inline ChVector3<RealA> Vmin(const ChVector3<RealA>& va, const ChVector3<RealA>& vb) {
     ChVector3<RealA> result;
     result.x() = std::min(va.x(), vb.x());
     result.y() = std::min(va.y(), vb.y());
@@ -418,7 +418,7 @@ ChVector3<RealA> Vmin(const ChVector3<RealA>& va, const ChVector3<RealA>& vb) {
 }
 
 template <class RealA>
-ChVector3<RealA> Vmax(const ChVector3<RealA>& va, const ChVector3<RealA>& vb) {
+CH_NODISCARD constexpr inline ChVector3<RealA> Vmax(const ChVector3<RealA>& va, const ChVector3<RealA>& vb) {
     ChVector3<RealA> result;
     result.x() = std::max(va.x(), vb.x());
     result.y() = std::max(va.y(), vb.y());
@@ -428,13 +428,13 @@ ChVector3<RealA> Vmax(const ChVector3<RealA>& va, const ChVector3<RealA>& vb) {
 
 // Gets the zenith angle of a unit vector respect to YZ plane  ***OBSOLETE
 template <class RealA>
-double VangleYZplane(const ChVector3<RealA>& va) {
+CH_NODISCARD constexpr inline double VangleYZplane(const ChVector3<RealA>& va) {
     return std::asin(Vdot(va, ChVector3<RealA>(1, 0, 0)));
 }
 
 // Gets the zenith angle of a unit vector respect to YZ plane  ***OBSOLETE
 template <class RealA>
-double VangleYZplaneNorm(const ChVector3<RealA>& va) {
+CH_NODISCARD constexpr inline double VangleYZplaneNorm(const ChVector3<RealA>& va) {
     return std::acos(Vdot(va, ChVector3<RealA>(1, 0, 0)));
 }
 

@@ -181,7 +181,7 @@ class Brick_ForceAnalytical : public ChIntegrand3D<ChVectorN<double, 906>> {
     ChVectorN<double, 6> strain_EAS;  // Enhanced assumed strain vector
 
     // Evaluate (strainD'*strain)  at a point
-    virtual void Evaluate(ChVectorN<double, 906>& result, const double x, const double y, const double z) override;
+    virtual void Evaluate(ChVectorN<double, 906>& result, const double& x, const double& y, const double& z) override;
 };
 
 Brick_ForceAnalytical::Brick_ForceAnalytical(ChMatrixNM<double, 8, 3>* d_,
@@ -218,7 +218,7 @@ Brick_ForceAnalytical::Brick_ForceAnalytical(ChMatrixNM<double, 8, 3>* d_,
     Sz.setZero();
 }
 
-void Brick_ForceAnalytical::Evaluate(ChVectorN<double, 906>& result, const double x, const double y, const double z) {
+void Brick_ForceAnalytical::Evaluate(ChVectorN<double, 906>& result, const double& x, const double& y, const double& z) {
     element->ShapeFunctionsDerivativeX(Nx, x, y, z);
     element->ShapeFunctionsDerivativeY(Ny, x, y, z);
     element->ShapeFunctionsDerivativeZ(Nz, x, y, z);
@@ -722,7 +722,7 @@ class Brick_ForceNumerical : public ChIntegrand3D<ChVectorN<double, 330>> {
     ChVectorN<double, 6> strain_EAS;  // Enhanced assumed strain vector
 
     // Gaussian integration to calculate internal forces and EAS matrices
-    virtual void Evaluate(ChVectorN<double, 330>& result, const double x, const double y, const double z) override;
+    virtual void Evaluate(ChVectorN<double, 330>& result, const double& x, const double& y, const double& z) override;
 };
 
 Brick_ForceNumerical::Brick_ForceNumerical(ChMatrixNM<double, 8, 3>* d_,
@@ -755,7 +755,7 @@ Brick_ForceNumerical::Brick_ForceNumerical(ChMatrixNM<double, 8, 3>* d_,
     Sz.setZero();
 }
 
-void Brick_ForceNumerical::Evaluate(ChVectorN<double, 330>& result, const double x, const double y, const double z) {
+void Brick_ForceNumerical::Evaluate(ChVectorN<double, 330>& result, const double& x, const double& y, const double& z) {
     element->ShapeFunctionsDerivativeX(Nx, x, y, z);
     element->ShapeFunctionsDerivativeY(Ny, x, y, z);
     element->ShapeFunctionsDerivativeZ(Nz, x, y, z);
@@ -1509,14 +1509,14 @@ class Brick_Mass : public ChIntegrand3D<ChMatrixNM<double, 24, 24>> {
     ChElementHexaANCF_3813::ShapeVector Nz;  ///< Dense shape function vector, Z derivative
 
     /// Evaluate the S'*S  at point x
-    virtual void Evaluate(ChMatrixNM<double, 24, 24>& result, const double x, const double y, const double z) override;
+    virtual void Evaluate(ChMatrixNM<double, 24, 24>& result, const double& x, const double& y, const double& z) override;
 };
 
 Brick_Mass::Brick_Mass(ChMatrixNM<double, 8, 3>* d0_, ChElementHexaANCF_3813* element_) : element(element_), d0(d0_) {
     S.setZero();
 }
 
-void Brick_Mass::Evaluate(ChMatrixNM<double, 24, 24>& result, const double x, const double y, const double z) {
+void Brick_Mass::Evaluate(ChMatrixNM<double, 24, 24>& result, const double& x, const double& y, const double& z) {
     element->ShapeFunctions(N, x, y, z);
     element->ShapeFunctionsDerivativeX(Nx, x, y, z);
     element->ShapeFunctionsDerivativeY(Ny, x, y, z);
@@ -1575,13 +1575,13 @@ class BrickGravity : public ChIntegrand3D<ChVectorN<double, 8>> {
     ChElementHexaANCF_3813::ShapeVector Ny;  // Dense shape function vector, Y derivative
     ChElementHexaANCF_3813::ShapeVector Nz;  // Dense shape function vector, Z derivative
 
-    virtual void Evaluate(ChVectorN<double, 8>& result, const double x, const double y, const double z) override;
+    virtual void Evaluate(ChVectorN<double, 8>& result, const double& x, const double& y, const double& z) override;
 };
 
 BrickGravity::BrickGravity(ChMatrixNM<double, 8, 3>* d0_, ChElementHexaANCF_3813* element_)
     : element(element_), d0(d0_) {}
 
-void BrickGravity::Evaluate(ChVectorN<double, 8>& result, const double x, const double y, const double z) {
+void BrickGravity::Evaluate(ChVectorN<double, 8>& result, const double& x, const double& y, const double& z) {
     element->ShapeFunctions(N, x, y, z);
     element->ShapeFunctionsDerivativeX(Nx, x, y, z);
     element->ShapeFunctionsDerivativeY(Ny, x, y, z);

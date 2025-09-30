@@ -20,7 +20,7 @@ double ChRandom::Get() {
     return GetInstance().m_distribution(GetInstance().m_generator);
 }
 
-void ChRandom::SetSeed(double seed) {
+void ChRandom::SetSeed(const double& seed) {
     GetInstance().m_generator.seed(seed);
 }
 
@@ -33,7 +33,7 @@ ChRandom& ChRandom::GetInstance() {
 
 // -----------------------------------------------------------------------------
 
-ChUniformDistribution::ChUniformDistribution(double min, double max)
+ChUniformDistribution::ChUniformDistribution(const double& min, const double& max)
     : m_generator(m_rand_device()), m_distribution(min, max) {}
 
 double ChUniformDistribution::GetRandom() {
@@ -42,7 +42,7 @@ double ChUniformDistribution::GetRandom() {
 
 // -----------------------------------------------------------------------------
 
-ChNormalDistribution::ChNormalDistribution(double mean, double std_dev)
+ChNormalDistribution::ChNormalDistribution(const double& mean, const double& std_dev)
     : m_generator(m_rand_device()), m_distribution(mean, std_dev), m_mean(mean), m_std_dev(std_dev) {}
 
 double ChNormalDistribution::GetRandom() {
@@ -51,7 +51,7 @@ double ChNormalDistribution::GetRandom() {
 
 // -----------------------------------------------------------------------------
 
-ChWeibullDistribution::ChWeibullDistribution(double shape_param, double scale_param)
+ChWeibullDistribution::ChWeibullDistribution(const double& shape_param, const double& scale_param)
     : m_generator(m_rand_device()),
       m_distribution(shape_param, scale_param),
       m_shape_param(shape_param),
@@ -63,7 +63,7 @@ double ChWeibullDistribution::GetRandom() {
 
 // -----------------------------------------------------------------------------
 
-ChZhangDistribution::ChZhangDistribution(double average_size, double minimum_size)
+ChZhangDistribution::ChZhangDistribution(const double& average_size, const double& minimum_size)
     : m_generator(m_rand_device()), m_min_size(minimum_size) {
     m_lambda_r = 1.0 / (average_size - minimum_size);
 }
@@ -77,7 +77,7 @@ double ChZhangDistribution::GetRandom() {
 
 // -----------------------------------------------------------------------------
 
-ChContinuumDistribution::ChContinuumDistribution(ChVectorDynamic<>& x, ChVectorDynamic<>& y)
+ChContinuumDistribution::ChContinuumDistribution(const ChVectorDynamic<>& x, const ChVectorDynamic<>& y)
     : m_generator(m_rand_device()), m_x(x), m_y(y) {
     if (x.size() != y.size())
         throw std::runtime_error("Probability curve must have same number of elements in abscysse and ordinates");
@@ -128,12 +128,12 @@ double ChContinuumDistribution::GetRandom() {
 
 // -----------------------------------------------------------------------------
 
-ChDiscreteDistribution::ChDiscreteDistribution(ChVectorDynamic<>& x, ChVectorDynamic<>& y)
-    : m_generator(m_rand_device()), m_x(x), m_y(y) {
-    if (x.size() != y.size())
+ChDiscreteDistribution::ChDiscreteDistribution(const ChVectorDynamic<>& discrete_values, const ChVectorDynamic<>& probabilities)
+    : m_generator(m_rand_device()), m_x(discrete_values), m_y(probabilities) {
+    if (discrete_values.size() != probabilities.size())
         throw std::runtime_error("Probability values and percentages must have the same size");
 
-    m_cdf_y = y;
+    m_cdf_y = probabilities;
 
     // compute CDF
     double integral = 0;

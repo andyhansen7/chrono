@@ -19,6 +19,7 @@
 
 #include "chrono/core/ChApiCE.h"
 #include "chrono/core/ChMatrix.h"
+#include "chrono/core/ChTypes.h"
 #include "chrono/utils/ChConstants.h"
 
 namespace chrono {
@@ -27,15 +28,15 @@ namespace chrono {
 /// These quadrature tables are automatically managed by ChQuadrature.
 class ChApi ChQuadratureTables {
   public:
-    ChQuadratureTables(int order_from = 1, int order_to = 10);
+    ChQuadratureTables(const int& order_from = 1, const int& order_to = 10);
 
     std::vector<std::vector<double>> Weight;
     std::vector<std::vector<double>> Lroots;
 
-    void PrintTables();
+    void PrintTables() const;
 
   private:
-    void glege_roots(ChMatrixDynamic<>& lcoef, int N, int ntable);
+    void glege_roots(ChMatrixDynamic<>& lcoef, const int& N, const int& ntable);
 };
 
 /// Polynomial roots and weights for quadrature over a triangle.
@@ -73,7 +74,7 @@ class ChIntegrand1D {
     virtual ~ChIntegrand1D() {}
 
     /// Evaluate the function at point x, that is result T = f(x).
-    virtual void Evaluate(T& result, const double x) = 0;
+    virtual void Evaluate(T& result, const double& x) = 0;
 };
 
 /// Base class for 2D integrand T = f(x,y) to be used in ChQuadrature.
@@ -83,7 +84,7 @@ class ChIntegrand2D {
     virtual ~ChIntegrand2D() {}
 
     /// Evaluate the function at point x,y , that is result T = f(x,y).
-    virtual void Evaluate(T& result, const double x, const double y) = 0;
+    virtual void Evaluate(T& result, const double& x, const double& y) = 0;
 };
 
 /// Base class for 3D integrand T = f(x,y,z) to be used in ChQuadrature.
@@ -93,7 +94,7 @@ class ChIntegrand3D {
     virtual ~ChIntegrand3D() {}
 
     /// Evaluate the function at point x,y,z , that is result T = f(x,y,z)
-    virtual void Evaluate(T& result, const double x, const double y, const double z) = 0;
+    virtual void Evaluate(T& result, const double& x, const double& y, const double& z) = 0;
 };
 
 // -----------------------------------------------------------------------------
@@ -109,30 +110,27 @@ class ChApi ChQuadrature {
     template <class T>
     static void Integrate1D(T& result,                    ///< result is returned here
                             ChIntegrand1D<T>& integrand,  ///< this is the integrand
-                            const double x_min,           ///< min limit for x domain
-                            const double x_max,           ///< min limit for x domain
-                            const int order               ///< order of integration
+                            const double& x_min,           ///< min limit for x domain
+                            const double& x_max,           ///< min limit for x domain
+                            const int& order               ///< order of integration
     ) {
-        ChQuadratureTables* mtables = 0;
-        std::vector<double>* lroots;
-        std::vector<double>* weight;
-        bool static_tables;
+        std::shared_ptr<ChQuadratureTables> mtables = nullptr;
+        const std::vector<double>* lroots;
+        const std::vector<double>* weight;
 
-        if ((unsigned int)order <= GetStaticTables()->Lroots.size()) {
+        if (static_cast<unsigned>(order) <= GetStaticTables()->Lroots.size()) {
             mtables = GetStaticTables();
             lroots = &mtables->Lroots[order - 1];
             weight = &mtables->Weight[order - 1];
-            static_tables = true;
         } else {
-            mtables = new ChQuadratureTables(order, order);
+            mtables = chrono_types::make_shared<ChQuadratureTables>(order, order);
             mtables->PrintTables();
             lroots = &mtables->Lroots[0];
             weight = &mtables->Weight[0];
-            static_tables = false;
         }
 
-        double c1 = (x_max - x_min) / 2;
-        double c2 = (x_max + x_min) / 2;
+        const double c1 = (x_max - x_min) / 2;
+        const double c2 = (x_max + x_min) / 2;
 
         result *= 0;  // as result = 0, but works also for matrices.
         T val;        // temporary value for loop
@@ -143,9 +141,6 @@ class ChApi ChQuadrature {
             result += val;
         }
         result *= c1;  // result = c1 * sum;
-
-        if (!static_tables)
-            delete mtables;
     }
 
     /// Integrate the integrand T = f(x,y) over the 2D interval [xA, xB][yA, yB], with desired order of quadrature.
@@ -153,34 +148,31 @@ class ChApi ChQuadrature {
     template <class T>
     static void Integrate2D(T& result,                    ///< result is returned here
                             ChIntegrand2D<T>& integrand,  ///< this is the integrand
-                            const double x_min,           ///< min limit for x domain
-                            const double x_max,           ///< min limit for x domain
-                            const double y_min,           ///< min limit for y domain
-                            const double y_max,           ///< min limit for y domain
-                            const int order               ///< order of integration
+                            const double& x_min,           ///< min limit for x domain
+                            const double& x_max,           ///< min limit for x domain
+                            const double& y_min,           ///< min limit for y domain
+                            const double& y_max,           ///< min limit for y domain
+                            const int& order               ///< order of integration
     ) {
-        ChQuadratureTables* mtables = 0;
-        std::vector<double>* lroots;
-        std::vector<double>* weight;
-        bool static_tables;
+        std::shared_ptr<ChQuadratureTables> mtables = nullptr;
+        const std::vector<double>* lroots;
+        const std::vector<double>* weight;
 
-        if ((unsigned int)order <= GetStaticTables()->Lroots.size()) {
+        if (static_cast<unsigned int>(order) <= GetStaticTables()->Lroots.size()) {
             mtables = GetStaticTables();
             lroots = &mtables->Lroots[order - 1];
             weight = &mtables->Weight[order - 1];
-            static_tables = true;
         } else {
-            mtables = new ChQuadratureTables(order, order);
+            mtables = chrono_types::make_shared<ChQuadratureTables>(order, order);
             mtables->PrintTables();
             lroots = &mtables->Lroots[0];
             weight = &mtables->Weight[0];
-            static_tables = false;
         }
 
-        double Xc1 = (x_max - x_min) / 2;
-        double Xc2 = (x_max + x_min) / 2;
-        double Yc1 = (y_max - y_min) / 2;
-        double Yc2 = (y_max + y_min) / 2;
+        const double Xc1 = (x_max - x_min) / 2;
+        const double Xc2 = (x_max + x_min) / 2;
+        const double Yc1 = (y_max - y_min) / 2;
+        const double Yc2 = (y_max + y_min) / 2;
 
         result *= 0;  // as result = 0, but works also for matrices.
         T val;        // temporary value for loop
@@ -192,9 +184,6 @@ class ChApi ChQuadrature {
                 result += val;
             }
         result *= (Xc1 * Yc1);
-
-        if (!static_tables)
-            delete mtables;
     }
 
     /// Integrate the integrand T = f(x,y,z) over the 3D interval [xA, xB][yA, yB][zA, zB], with desired order of
@@ -210,30 +199,27 @@ class ChApi ChQuadrature {
                             const double z_max,           ///< min limit for z domain
                             const int order               ///< order of integration
     ) {
-        ChQuadratureTables* mtables = 0;
-        std::vector<double>* lroots;
-        std::vector<double>* weight;
-        bool static_tables;
+        std::shared_ptr<ChQuadratureTables> mtables = nullptr;
+        const std::vector<double>* lroots;
+        const std::vector<double>* weight;
 
-        if ((unsigned int)order <= GetStaticTables()->Lroots.size()) {
+        if (static_cast<unsigned int>(order) <= GetStaticTables()->Lroots.size()) {
             mtables = GetStaticTables();
             lroots = &mtables->Lroots[order - 1];
             weight = &mtables->Weight[order - 1];
-            static_tables = true;
         } else {
-            mtables = new ChQuadratureTables(order, order);
+            mtables = chrono_types::make_shared<ChQuadratureTables>(order, order);
             mtables->PrintTables();
             lroots = &mtables->Lroots[0];
             weight = &mtables->Weight[0];
-            static_tables = false;
         }
 
-        double Xc1 = (x_max - x_min) / 2;
-        double Xc2 = (x_max + x_min) / 2;
-        double Yc1 = (y_max - y_min) / 2;
-        double Yc2 = (y_max + y_min) / 2;
-        double Zc1 = (z_max - z_min) / 2;
-        double Zc2 = (z_max + z_min) / 2;
+        const double Xc1 = (x_max - x_min) / 2;
+        const double Xc2 = (x_max + x_min) / 2;
+        const double Yc1 = (y_max - y_min) / 2;
+        const double Yc2 = (y_max + y_min) / 2;
+        const double Zc1 = (z_max - z_min) / 2;
+        const double Zc2 = (z_max + z_min) / 2;
 
         result *= 0;  // as result = 0, but works also for matrices.
         T val;        // temporary value for loop
@@ -247,9 +233,6 @@ class ChApi ChQuadrature {
                     result += val;
                 }
         result *= (Xc1 * Yc1 * Zc1);
-
-        if (!static_tables)
-            delete mtables;
     }
 
     /// Integrate the 2D integrand T = f(u,v) over a triangle, with desired order of quadrature.
@@ -260,13 +243,13 @@ class ChApi ChQuadrature {
                                     ChIntegrand2D<T>& integrand,  ///< this is the integrand
                                     const int order               ///< order of integration
     ) {
-        if ((unsigned int)order > GetStaticTablesTriangle()->Weight.size())
+        if (static_cast<unsigned int>(order) > GetStaticTablesTriangle()->Weight.size())
             throw std::invalid_argument("Too high order of quadrature for triangle. Use lower order.");
 
-        ChQuadratureTablesTriangle* mtables = GetStaticTablesTriangle();
-        std::vector<double>* lrootsU = &mtables->LrootsU[order - 1];
-        std::vector<double>* lrootsV = &mtables->LrootsV[order - 1];
-        std::vector<double>* weight = &mtables->Weight[order - 1];
+        const auto mtables = GetStaticTablesTriangle();
+        const std::vector<double>* lrootsU = &mtables->LrootsU[order - 1];
+        const std::vector<double>* lrootsV = &mtables->LrootsV[order - 1];
+        const std::vector<double>* weight = &mtables->Weight[order - 1];
 
         result *= 0;  // as result = 0, but works also for matrices.
         T val;        // temporary value for loop
@@ -287,14 +270,14 @@ class ChApi ChQuadrature {
                                        ChIntegrand3D<T>& integrand,  ///< this is the integrand
                                        const int order               ///< order of integration
     ) {
-        if ((unsigned int)order > GetStaticTablesTetrahedron()->Weight.size())
+        if (static_cast<unsigned int>(order) > GetStaticTablesTetrahedron()->Weight.size())
             throw std::invalid_argument("Too high order of quadrature for tetrahedron. Use lower order.");
 
-        ChQuadratureTablesTetrahedron* mtables = GetStaticTablesTetrahedron();
-        std::vector<double>* lrootsU = &mtables->LrootsU[order - 1];
-        std::vector<double>* lrootsV = &mtables->LrootsV[order - 1];
-        std::vector<double>* lrootsW = &mtables->LrootsW[order - 1];
-        std::vector<double>* weight = &mtables->Weight[order - 1];
+        const auto mtables = GetStaticTablesTetrahedron();
+        const std::vector<double>* lrootsU = &mtables->LrootsU[order - 1];
+        const std::vector<double>* lrootsV = &mtables->LrootsV[order - 1];
+        const std::vector<double>* lrootsW = &mtables->LrootsW[order - 1];
+        const std::vector<double>* weight = &mtables->Weight[order - 1];
 
         result *= 0;  // as result = 0, but works also for matrices.
         T val;        // temporary value for loop
@@ -307,15 +290,46 @@ class ChApi ChQuadrature {
     }
 
     /// Access a statically-allocated set of tables, from 0 to 10th order, with precomputed tables.
-    static ChQuadratureTables* GetStaticTables();
+    CH_NODISCARD static inline std::shared_ptr<ChQuadratureTables> GetStaticTables();
 
     /// Access a statically-allocated set of tables for tetrahedron quadrature, with 5 precomputed tables.
-    static ChQuadratureTablesTriangle* GetStaticTablesTriangle();
+    CH_NODISCARD static inline std::shared_ptr<ChQuadratureTablesTriangle> GetStaticTablesTriangle();
 
     /// Access a statically-allocated set of tables for tetrahedron quadrature, with 5 precomputed tables.
     /// Use Dunavant theory.
-    static ChQuadratureTablesTetrahedron* GetStaticTablesTetrahedron();
+    CH_NODISCARD static inline std::shared_ptr<ChQuadratureTablesTetrahedron> GetStaticTablesTetrahedron();
 };
+
+// -----------------------------------------------------------------------------
+
+#define CH_QUADRATURE_STATIC_TABLES 10
+
+static std::shared_ptr<ChQuadratureTables> static_tables;
+static std::shared_ptr<ChQuadratureTablesTriangle> static_tables_triangle;  // only 5 tables
+static std::shared_ptr<ChQuadratureTablesTetrahedron> static_tables_tetrahedron;  // only 5 tables
+
+// -----------------------------------------------------------------------------
+
+CH_NODISCARD inline std::shared_ptr<ChQuadratureTables> ChQuadrature::GetStaticTables() {
+    if (!static_tables) {
+        static_tables = chrono_types::make_shared<ChQuadratureTables>(1, CH_QUADRATURE_STATIC_TABLES);
+    }
+    return static_tables;
+}
+
+CH_NODISCARD inline std::shared_ptr<ChQuadratureTablesTriangle> ChQuadrature::GetStaticTablesTriangle() {
+    if (!static_tables_triangle) {
+        static_tables_triangle = chrono_types::make_shared<ChQuadratureTablesTriangle>();
+    }
+    return static_tables_triangle;
+}
+
+CH_NODISCARD inline std::shared_ptr<ChQuadratureTablesTetrahedron> ChQuadrature::GetStaticTablesTetrahedron() {
+    if (!static_tables_tetrahedron) {
+        static_tables_tetrahedron = chrono_types::make_shared<ChQuadratureTablesTetrahedron>();
+    }
+    return static_tables_tetrahedron;
+}
 
 }  // end namespace chrono
 

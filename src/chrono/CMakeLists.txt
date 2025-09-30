@@ -21,8 +21,6 @@ cmake_dependent_option(CH_USE_BULLET_OPENMP "Compile Chrono with OpenMP support 
 
 set(Chrono_core_SOURCES
     core/ChClassFactory.cpp
-    core/ChQuaternion.cpp
-    core/ChRotation.cpp
     core/ChCoordsys.cpp
     core/ChQuadrature.cpp
     core/ChBezierCurve.cpp
